@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chatapp.settings')
 django.setup()
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
-from notifications.routing import websocket_urlpatterns
+from .routing import websocket_urlpatterns
 from channels.security.websocket import AllowedHostsOriginValidator
 
 application = ProtocolTypeRouter({
