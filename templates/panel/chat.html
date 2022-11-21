@@ -1,0 +1,554 @@
+{% load static %}
+{% load humanize %}
+{% load truncate %}
+<!doctype html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="copyright" content="Devme, https://tevinly.com/">
+    <title>{% if obj.site_name %} {{obj.site_name}}  {% else %} {{site_name}} {% endif %} / {{title}}</title>
+    <meta name="description" content="{{obj.description}}">
+    <meta name="author" content="{{designer_name}}">
+    <meta name="theme-color" content="{{obj.theme_color}}">
+    <meta name="msapplication-navbutton-color" content="{{obj.theme_color}}">
+    <meta name="apple-mobile-web-app-status-bar-style" content="{{obj.theme_color}}">
+    <meta name="keywords" content="{{obj.key_words}}">
+    <meta property="og:site_name" content="{{obj.site_name}}">
+    <meta property="og:url" content="{{obj.site_url}}">
+    <meta http-equiv="Content-type" content="text/html;charset:utf-8">
+    <meta property="og:type" content="website"> 
+    <meta property="twitter:site" content="https://twitter.com/Kevin36285655">
+    <meta property="twitter:title" content="@Kevin36285655">
+    <meta property="twitter:image" content="https://twitter.com/Kevin36285655/photo">
+    <meta property="twitter:description" content="Life's Simple.">
+    <meta property="twitter:text:title" content="Life's Simple.">
+    <meta property="og:title" content="{{obj.site_name}} | {{title}}">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:description" content="{{obj.description}}">
+    <meta property="og:image" content="{{obj.favicon.url}}">
+    <meta name="apple-mobile-web-app-title" content="{{obj.site_name}}">
+    <meta name="application-name" content="{{obj.site_name}}">
+    <meta name="msapplication-TileColor" content="{{obj.theme_color}}">
+    <meta name="msapplication-config" content="{% static 'panel/assets/images/logos/browserconfig.xml' %}">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="canonical" href="{{request.get_full_path}}" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="shortcut icon" href="{{obj.favicon.url}}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'panel/assets/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'panel/assets/plugins/select2/select2.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'panel/assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css' %}">
+    <script src="https://www.paypal.com/sdk/js?client-id={{obj.paypal_client_id}}&currency=USD"></script>
+    <link rel="stylesheet" type="text/css"  href="{% static 'panel/assets/plugins/jquery-datatable/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'panel/assets/plugins/bootstrap-select/css/bootstrap-select.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'panel/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'panel/assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'panel/assets/css/main.css' %}"/>
+    <link rel="stylesheet" href="{% static 'panel/assets/css/theme1.css' %}"/>
+    <link rel="stylesheet" href="{% static 'panel/assets/css/custom.css' %}"/>
+    <style>
+        .right_chat .activated{
+            background:rgba(0,169,189,0.1);
+        }
+        .counter{
+            width:25px;
+            height:25px;
+            border-radius:50%;
+            position:absolute !important;
+            top:10px !important;
+            right:-180px !important;
+            line-height:16px;
+            text-align:center;
+            align-items:center;
+            justify-content:center;
+        }
+    </style>
+</head>
+  <body lass="font-montserrat" onload="load()">
+
+   <!-- preloader -->
+    <div class="placeholder">
+        <div class="overlay">
+            <div class="row">
+                <div class="col-12">
+                    <div class="loader-container">
+                        <div class="myloader">
+                            <svg class="circular" viewBox="25 25 50 50">
+                                <circle class="path" cx="50" cy="50" r="10" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   <!-- //preloader -->
+ 
+
+    <div class="main-display " style="display:none">
+       <div id="main_content">    
+            <div id="header_top" class="header_top">
+                <div class="container">
+                    <div class="hleft">
+                        <a class="header-brand" href="{% url 'dashboard' %}">
+                            <img src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{obj.favicon.url}}" alt="{{obj.site_name}}" title="{{obj.site_name}}" style="height:35px;" />
+                        </a>                        
+                        <div class="dropdown">
+                            {% if request.user.is_authenticated %}
+                            <a href="javascript:void(0)" class="nav-link user_btn">
+                                <img class="avatar" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{data.extendedauthuser.profile_pic.url}}" alt="{{data.get_full_name}}" title="{{data.get_full_name}} menu" data-toggle="tooltip" data-placement="right"/>
+                            </a>
+                            {% endif %}                            
+                        <a href="javascript:void(0)" class="nav-link icon theme_btn xs-hide"><i class="fa fa-paint-brush" data-toggle="tooltip" data-placement="right" title="Themes"></i></a>
+                        </div>
+                    </div>
+                    <div class="hright">
+                        <div class="dropdown">
+                            <a href="javascript:void(0)" class="nav-link icon settingbar"><i class="fa fa-gear fa-spin" data-toggle="tooltip" data-placement="right" title="Settings"></i></a>
+                            <a href="javascript:void(0)" class="nav-link icon menu_toggle"><i class="fa  fa-align-left"></i></a>
+                        </div>            
+                    </div>
+                </div>
+            </div>
+
+            <div id="rightsidebar" class="right_sidebar">
+                <a href="javascript:void(0)" class="p-3 settingbar float-right"><i class="fa fa-close"></i></a>
+                <div class="p-4">
+                    <div class="mb-4">
+                        <h6 class="font-14 font-weight-bold text-muted">Font Style</h6>
+                        <div class="custom-controls-stacked font_setting">
+                            <label class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" name="font" value="font-opensans">
+                                <span class="custom-control-label">Open Sans Font</span>
+                            </label>
+                            <label class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" name="font" value="font-montserrat" checked="">
+                                <span class="custom-control-label">Montserrat Google Font</span>
+                            </label>
+                            <label class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" class="custom-control-input" name="font" value="font-roboto">
+                                <span class="custom-control-label">Robot Google Font</span>
+                            </label>
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                    <h6 class="font-14 font-weight-bold mt-4 text-muted">General Settings</h6>
+                    <ul class="setting-list list-unstyled mt-1 setting_switch">
+                        <li>
+                            <label class="custom-switch">
+                                <span class="custom-switch-description">Night Mode</span>
+                                <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input btn-darkmode">
+                                <span class="custom-switch-indicator"></span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="custom-switch">
+                                <span class="custom-switch-description">Fix Navbar top</span>
+                                <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input btn-fixnavbar">
+                                <span class="custom-switch-indicator"></span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="custom-switch">
+                                <span class="custom-switch-description">Header Dark</span>
+                                <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input btn-pageheader" checked="">
+                                <span class="custom-switch-indicator"></span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="custom-switch">
+                                <span class="custom-switch-description">Min Sidebar Dark</span>
+                                <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input btn-min_sidebar">
+                                <span class="custom-switch-indicator"></span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="custom-switch">
+                                <span class="custom-switch-description">Sidebar Dark</span>
+                                <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input btn-sidebar">
+                                <span class="custom-switch-indicator"></span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="custom-switch">
+                                <span class="custom-switch-description">Icon Color</span>
+                                <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input btn-iconcolor">
+                                <span class="custom-switch-indicator"></span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="custom-switch">
+                                <span class="custom-switch-description">Gradient Color</span>
+                                <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input btn-gradient">
+                                <span class="custom-switch-indicator"></span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="custom-switch">
+                                <span class="custom-switch-description">Box Shadow</span>
+                                <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input btn-boxshadow">
+                                <span class="custom-switch-indicator"></span>
+                            </label>
+                        </li>
+                        <li>
+                            <label class="custom-switch">
+                                <span class="custom-switch-description">Box Layout</span>
+                                <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input btn-boxlayout">
+                                <span class="custom-switch-indicator"></span>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <div class="theme_div">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="list-group list-unstyled">
+                            <li class="list-group-item mb-2">
+                                <p>Default Theme</p>
+                                <a onclick="$('.btn-darkmode').click();" href="javascript:void(0);"><img src="{% static 'panel/assets/images/loader.gif' %}"  data-src="{% static 'panel/assets/images/themes/default.png' %}" class="img-fluid" /></a>
+                            </li>
+                            <li class="list-group-item mb-2">
+                                <p>Night Mode Theme</p>
+                                <a  onclick="$('.btn-darkmode').click();" href="javascript:void(0);"><img src="{% static 'panel/assets/images/loader.gif' %}"  data-src="{% static 'panel/assets/images/themes/dark.png' %}" class="img-fluid" /></a>
+                            </li>                    
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="user_div">
+                <h5 class="brand-name mb-4">{{obj.site_name}}<a href="javascript:void(0)" class="user_btn"><i class="icon-logout"></i></a></h5>
+                <div class="text-center card-body">
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'profile' username=data.username %}">
+                        <img style="width:80px;height:80px;" class="img-responsive card-profile-img" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{data.extendedauthuser.profile_pic.url}}" alt="{{data.get_full_name}}" title="{{data.get_full_name}}"/>
+                    </a>
+                    {% endif %}
+                    <h6 class="mb-0">{{data.get_full_name|default:'Not Set'}}</h6>
+                    <span>{{data.email}}</span> 
+                </div>
+            </div>
+            <div id="left-sidebar" class="sidebar ">
+                <h5 class="brand-name">{{obj.site_name}} <a href="javascript:void(0)" class="menu_option float-right"><i class="icon-grid font-16" data-toggle="tooltip" data-placement="left" title="Grid & List Toggle"></i></a></h5>
+                <nav id="left-sidebar-nav" class="sidebar-nav">
+                    <ul class="metismenu">
+                        <li class="g_heading">Menu</li>
+                        <li><a href="index-2.html"><i class="fa fa-dashboard"></i><span>Dashboard</span></a></li>   
+                        {% if request.user.is_authenticated %}                      
+                        <li><a href="{% url 'profile' username=data.username %}"><i class="fa fa-user"></i><span>Profile</span></a></li>
+                        {% endif %}
+                        {% if request.user.is_superuser %}                      
+                        <li><a href="{% url 'site settings'%}"><i class="fa fa-cog"></i><span>Site Settings</span></a></li>
+                        {% endif %}
+                        <li><a href="{% url 'logout' %}"><i class="fa fa-key"></i><span>Logout</span></a></li>
+                    </ul>
+                </nav>        
+            </div>
+            <div class="page">
+                <div class="section-light py-3 chat_app">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-8 col-md-12">  
+                                <div class="tab-content" id="pills-tabContent">
+
+                                    <div class="text-center tab-pane fade show active mt-5" role="tabpanel">
+                                        <img data-src="{% static 'panel/assets/images/search.svg' %}" class="width360 mb-3" />
+                                        <h4><i class="ti-info-alt"></i> Select chat to start conversation</h4>
+                                    </div>
+                                    {% if chats %}
+                                        {% for user in chats %}
+                                        <div class="tab-pane fade" id="pills-info_{{user.id}}" role="tabpanel" aria-labelledby="pills-info_{{user.id}}-tab">
+                                            <div class="card bg-none b-none">
+                                                <div class="card-header bline bg-none">
+                                                    <h3 class="card-title">{{user.username}}
+                                                        {% if user.extendedauthuser.is_online %} 
+                                                        <small class="text-success">Online</small>
+                                                        {% else %}
+                                                        <small class="text-success"> Last seen:{{user.extendedauthuser.updated_on|naturaltime}}</small>
+                                                        {% endif %}
+                                                    </h3>
+                                                    <div class="card-options">
+                                                        <a href="javascript:void(0)" class="p-1"><i class="fa fa-refresh"></i></a>
+                                                    </div>
+                                                </div>                        
+                                                <div class="chat_windows">
+                                                   <ul class="mb-0 chat_window_list">
+                                                        {% for message in messages %}
+                                                            {% if data.is_staff %}
+                                                                {% if message.sender_id == data.id %} 
+                                                                <li class="my-message">
+                                                                    <img class="avatar mr-3" src="{% static 'panel/assets/images/loader.gif' %}"   data-src="{{message.sender.extendedauthuser.profile_pic.url}}" alt="{{message.sender.get_full_name}}">
+                                                                    <div class="message">
+                                                                        <p class="bg-light-blue">{{message.message}}</p>
+                                                                        <span class="time" >{{message.created_on|naturaltime}}</span>
+                                                                    </div>
+                                                                </li>
+                                                                {% else %}
+                                                                <li class="other-message">
+                                                                    <img class="avatar mr-3" src="{% static 'panel/assets/images/loader.gif' %}"   data-src="{{message.sender.extendedauthuser.profile_pic.url}}" alt="{{message.sender.get_full_name}}">
+                                                                    <div class="message">
+                                                                        <p class="bg-light-blue">{{message.message}}</p>
+                                                                        <span class="time" >{{message.created_on|naturaltime}}</span>
+                                                                    </div>
+                                                                </li>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if message.sender.id == data.id  %}
+                                                                <li class="my-message">
+                                                                    <img class="avatar mr-3" src="{% static 'panel/assets/images/loader.gif' %}"   data-src="{{message.sender.extendedauthuser.profile_pic.url}}" alt="{{message.sender.get_full_name}}">
+                                                                    <div class="message">
+                                                                        <p class="bg-light-blue">{{message.message}}</p>
+                                                                        <span class="time" >{{message.created_on|naturaltime}}</span>
+                                                                    </div>
+                                                                </li> 
+                                                                {% else %}
+                                                                <li class="other-message">
+                                                                        <img class="avatar mr-3" src="{% static 'panel/assets/images/loader.gif' %}"   data-src="{{message.sender.extendedauthuser.profile_pic.url}}" alt="{{message.sender.get_full_name}}">
+                                                                        <div class="message">
+                                                                            <p class="bg-light-blue">{{message.message}}</p>
+                                                                            <span class="time" >{{message.created_on|naturaltime}}</span>
+                                                                        </div>
+                                                                    </li> 
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% empty %}
+                                                        <div class="text-center py-5">
+                                                            <img data-src="{% static 'panel/assets/images/search.svg' %}" class="width360 mb-3" />
+                                                            <h4><i class="ti-info-alt"></i> No messages found.</h4>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </ul>
+                                                    <div class="chat-message clearfix">
+                                                        <form class="ActiveForm" action="{% url 'chat' id=user.id %}" method="post" enctype="multipart/form-data" novalidate>
+                                                            {% csrf_token %}
+                                                            <div class="wrapper">
+                                                                <div class="input-group mb-0 pt-3 pb-3 ">
+                                                                    {{form.message}}
+                                                                    <button class="btn btn-round btn-primary">send <i class="fa  fa-angle-double-right"></i></button>
+                                                                </div>
+                                                                <div class="feedback"></div>
+                                                            </div>
+                                                       </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %} 
+                                    {% else %}
+                                        {% for user in users %}
+                                        <div class="tab-pane fade" id="pills-info_{{user.id}}" role="tabpanel" aria-labelledby="pills-info_{{user.id}}-tab">
+                                            <div class="card bg-none b-none">
+                                                <div class="card-header bline bg-none">
+                                                    <h3 class="card-title">{{user.username}}
+                                                        {% if user.extendedauthuser.is_online %} 
+                                                        <small class="text-success">Online</small>
+                                                        {% else %}
+                                                        <small class="text-success"> Last seen:{{user.extendedauthuser.updated_on|naturaltime}}</small>
+                                                        {% endif %}
+                                                    </h3>
+                                                    <div class="card-options">
+                                                        <a href="javascript:void(0)" class="p-1"><i class="fa fa-refresh"></i></a>
+                                                    </div>
+                                                </div>                        
+                                                <div class="chat_windows">
+                                                   <ul class="mb-0 chat_window_list">
+                                                        {% for message in messages %}
+                                                            {% if data.is_staff %}
+                                                                {% if message.sender_id == data.id %} 
+                                                                <li class="my-message">
+                                                                    <img class="avatar mr-3" src="{% static 'panel/assets/images/loader.gif' %}"   data-src="{{message.sender.extendedauthuser.profile_pic.url}}" alt="{{message.sender.get_full_name}}">
+                                                                    <div class="message">
+                                                                        <p class="bg-light-blue">{{message.message}}</p>
+                                                                        <span class="time" >{{message.created_on|naturaltime}}</span>
+                                                                    </div>
+                                                                </li>
+                                                                {% else %}
+                                                                <li class="other-message">
+                                                                    <img class="avatar mr-3" src="{% static 'panel/assets/images/loader.gif' %}"   data-src="{{message.sender.extendedauthuser.profile_pic.url}}" alt="{{message.sender.get_full_name}}">
+                                                                    <div class="message">
+                                                                        <p class="bg-light-blue">{{message.message}}</p>
+                                                                        <span class="time" >{{message.created_on|naturaltime}}</span>
+                                                                    </div>
+                                                                </li>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if message.sender.id == data.id  %}
+                                                                <li class="my-message">
+                                                                    <img class="avatar mr-3" src="{% static 'panel/assets/images/loader.gif' %}"   data-src="{{message.sender.extendedauthuser.profile_pic.url}}" alt="{{message.sender.get_full_name}}">
+                                                                    <div class="message">
+                                                                        <p class="bg-light-blue">{{message.message}}</p>
+                                                                        <span class="time" >{{message.created_on|naturaltime}}</span>
+                                                                    </div>
+                                                                </li> 
+                                                                {% else %}
+                                                                <li class="other-message">
+                                                                        <img class="avatar mr-3" src="{% static 'panel/assets/images/loader.gif' %}"   data-src="{{message.sender.extendedauthuser.profile_pic.url}}" alt="{{message.sender.get_full_name}}">
+                                                                        <div class="message">
+                                                                            <p class="bg-light-blue">{{message.message}}</p>
+                                                                            <span class="time" >{{message.created_on|naturaltime}}</span>
+                                                                        </div>
+                                                                    </li> 
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% empty %}
+                                                        <div class="text-center py-5">
+                                                            <img data-src="{% static 'panel/assets/images/search.svg' %}" class="width360 mb-3" />
+                                                            <h4><i class="ti-info-alt"></i> No messages found.</h4>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </ul>
+                                                    <div class="chat-message clearfix">
+                                                        <form class="ActiveForm" action="{% url 'chat' id=user.id %}" method="post" enctype="multipart/form-data" novalidate>
+                                                            {% csrf_token %}
+                                                            <div class="wrapper">
+                                                                <div class="input-group mb-0 pt-3 pb-3 ">
+                                                                    {{form.message}}
+                                                                    <button class="btn btn-round btn-primary">send <i class="fa  fa-angle-double-right"></i></button>
+                                                                </div>
+                                                                <div class="feedback"></div>
+                                                            </div>
+                                                       </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %} 
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat_list section-white" id="users">
+                        <a href="javascript:void(0)" class="chat_list_btn float-right"><i class="fa  fa-window-close"></i></a>
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="users-tab" data-toggle="tab" href="#users-list" role="tab" aria-controls="users-list" aria-selected="true">Users</a>
+                            </li> 
+                            <li class="nav-item">
+                                <a class="nav-link" id="groups-tab" data-toggle="tab" href="#groups" role="tab" aria-controls="groups" aria-selected="false">Contacts ({{users_count|intcomma|default:0}})</a>
+                            </li>                   
+                        </ul>
+                        <div class="input-group mt-2 mb-2">
+                            <input type="text" class="form-control search" placeholder="Search...">
+                        </div>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="users-list" role="tabpanel" aria-labelledby="users-tab">
+                                <ul class="right_chat list-unstyled list">
+                                    {% for user in chats %}
+                                    <li class="nav-link  online" id="pills-info_{{user.id}}-tab" data-toggle="pill" href="#pills-info_{{user.id}}" role="tab" aria-controls="pills-info_{{user.id}}" aria-selected="true">
+                                        <a href="javascript:void(0);">
+                                            <div class="media  position-relative">
+                                                <img class="media-object" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{user.extendedauthuser.profile_pic.url}}" alt="{{user.username}}">
+                                                <div class="media-body">
+                                                    <span class="name">{{user.username}} 
+                                                        {% if user.extendedauthuser.unread_messages > 0 %}
+                                                        <span class="badge counter badge-pill badge-danger float-right">{{user.extendedauthuser.unread_messages|intcomma}}</span>
+                                                        {% endif %}
+                                                    </span>
+                                                    {% if user.extendedauthuser.is_online %} 
+                                                    <small class="message text-truncate text-muted text-success">Online</small>
+                                                    {% else %}
+                                                    <small class="message text-truncate text-muted text-success"> Last seen:{{user.extendedauthuser.updated_on|naturaltime}}</small>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </a>                            
+                                    </li>
+                                    {% empty %}
+                                    <div class="text-center">
+                                        <p><i class="ti-info-alt"></i> No user(s) found.</p>
+                                    </div>  
+                                   {% endfor %}
+                                </ul>
+                                <ul class="mt-2 ml-2 pagination pagination-primary">
+                                    {% if chats.has_previous %}
+                                    <li class="page-item active"><a class="page-link" href="{% url 'dashboard' %}?page={{chats.previous_page_number}}"><i class="zmdi zmdi-chevron-left"></i></a></li>
+                                    {% endif %}
+                                    {% if chats.has_next %}
+                                    <li class="page-item active"><a class="page-link" href="{% url 'dashboard' %}?page={{chats.next_page_number}}"><i class="zmdi zmdi-chevron-right"></i></a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div class="tab-pane fade" id="groups" role="tabpanel" aria-labelledby="groups-tab">
+                                <ul class="right_chat list-unstyled list">
+                                    {% for user in users %}
+                                    <li class="nav-link  online" id="pills-info_{{user.id}}-tab" data-toggle="pill" href="#pills-info_{{user.id}}" role="tab" aria-controls="pills-info_{{user.id}}" aria-selected="true">
+                                        <a href="javascript:void(0);">
+                                            <div class="media  position-relative">
+                                                <img class="media-object" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{user.extendedauthuser.profile_pic.url}}" alt="{{user.username}}">
+                                                <div class="media-body">
+                                                    <span class="name">{{user.username}} 
+                                                        {% if user.extendedauthuser.unread_messages > 0 %}
+                                                        <span class="badge counter badge-pill badge-danger float-right">{{user.extendedauthuser.unread_messages|intcomma}}</span>
+                                                        {% endif %}
+                                                    </span>
+                                                    <span class="message text-truncate text-muted">{{user.email}}</span>
+                                                </div>
+                                            </div>
+                                        </a>                            
+                                    </li>
+                                    {% empty %}
+                                    <div class="text-center">
+                                        <p><i class="ti-info-alt"></i> No user(s) found.</p>
+                                    </div>  
+                                   {% endfor %}
+                                </ul>
+                                <ul class="mt-2 ml-2 pagination pagination-primary">
+                                    {% if users.has_previous %}
+                                    <li class="page-item active"><a class="page-link" href="{% url 'dashboard' %}?page={{users.previous_page_number}}"><i class="zmdi zmdi-chevron-left"></i></a></li>
+                                    {% endif %}
+                                    {% if users.has_next %}
+                                    <li class="page-item active"><a class="page-link" href="{% url 'dashboard' %}?page={{users.next_page_number}}"><i class="zmdi zmdi-chevron-right"></i></a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>        
+            </div>
+        </div>
+    </div>
+    {{data.username|json_script:"room-name" }}
+    <script src="{% static 'panel/assets/js/jquery-3.5.1.min.js' %}"></script>
+    <script src="{% static 'panel/assets/bundles/lib.vendor.bundle.js' %}"></script>
+    <script src="{% static 'panel/assets/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'panel/assets/bundles/apexcharts.bundle.js' %}"></script>
+    <script src="{% static 'panel/assets/bundles/counterup.bundle.js' %}"></script>
+    <script src="{% static 'panel/assets/bundles/knobjs.bundle.js' %}"></script>
+    <script src="{% static 'panel/assets/bundles/c3.bundle.js' %}"></script>
+    <script src="{% static 'panel/assets/js/core.js' %}"></script>
+    <script src="{% static 'panel/assets/js/page/project-index.js' %}"></script>
+    <script src="{% static 'panel/assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js' %}"></script> 
+    <script src="{% static 'panel/assets/plugins/jquery-inputmask/jquery.inputmask.bundle.js' %}"></script> 
+    <script src="{% static 'panel/assets/plugins/multi-select/js/jquery.multi-select.js' %}"></script>
+    <script src="{% static 'panel/assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js' %}"></script> 
+    <script src="{% static 'panel/assets/plugins/select2/select2.min.js' %}"></script>
+    <script src="{% static 'panel/assets/plugins/nouislider/nouislider.js' %}"></script>
+    <script src="{% static 'panel/assets/bundles/datatablescripts.bundle.js' %}"></script>
+    <script src="{% static 'panel/assets/plugins/jquery-datatable/buttons/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'panel/assets/plugins/jquery-datatable/buttons/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'panel/assets/plugins/jquery-datatable/buttons/buttons.colVis.min.js' %}"></script>
+    <script src="{% static 'panel/assets/plugins/jquery-datatable/buttons/buttons.flash.min.js' %}"></script>
+    <script src="{% static 'panel/assets/plugins/jquery-datatable/buttons/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'panel/assets/plugins/jquery-datatable/buttons/buttons.print.min.js' %}"></script>
+    <script src="{% static 'panel/assets/js/page/jquery-datatable.js' %}"></script>
+    <script src="{% static 'panel/assets/js/custom.js' %}?v=2.1"></script>
+    <script>
+        $(function()
+        {
+            $('.right_chat li').on('click',function()
+            {
+                $('.right_chat li.activated').not(this).removeClass('activated active');
+                $(this).toggleClass('activated');
+            });
+            $('.chat_window_list').animate({scrollTop:$(document).height()},'slow');
+        });
+    </script>
+</body>
+</html>
