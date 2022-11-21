@@ -43,7 +43,7 @@ class UserResetPassword(PasswordResetForm):
 
 class UserLoginForm(forms.Form):
     username=forms.CharField(widget=forms.TextInput(attrs={'aria-required':'true','class':'form-control','placeholder':'Username ','aria-label':'username'}),error_messages={'required':'Username  is required'})
-    password=forms.CharField(widget=forms.PasswordInput(attrs={'aria-required':'true','class':'form-control login-password','placeholder':'Password','aria-label':'password','autocomplete':True}),error_messages={'required':'Password is required'})
+    password=forms.CharField(widget=forms.PasswordInput(attrs={'aria-required':'true','class':'form-control login-password','placeholder':'Password','aria-label':'password','autocomplete':'on'}),error_messages={'required':'Password is required'})
 
     class Meta:
         model=User
@@ -59,9 +59,9 @@ class UserLoginForm(forms.Form):
 class UserReg(UserCreationForm):
     email=forms.EmailField(widget=forms.EmailInput(attrs={'aria-label':'email','class':'form-control','placeholder':'Enter email address'}),error_messages={'required':'Email address is required'})
     username=forms.CharField(widget=forms.TextInput(attrs={'aria-label':'username','class':'form-control','placeholder':'Enter username'}),error_messages={'required':'Username is required'})
-    password1=forms.CharField(min_length=6,widget=forms.PasswordInput(attrs={'aria-label':'password1','class':'form-control','placeholder':'Enter password','autocomplete':True}),error_messages={'required':'Password is required','min_length':'enter atleast 6 characters long'})
+    password1=forms.CharField(min_length=6,widget=forms.PasswordInput(attrs={'aria-label':'password1','class':'form-control','placeholder':'Enter password','autocomplete':'on'}),error_messages={'required':'Password is required','min_length':'enter atleast 6 characters long'})
     is_active=forms.BooleanField(widget=forms.CheckboxInput(attrs={'aria-label':'is_active','id':'checkbox1'}),required=False)
-    password2=forms.CharField(widget=forms.PasswordInput(attrs={'aria-label':'password2','class':'form-control','placeholder':'Enter confirm password','autocomplete':True}),error_messages={'required':'Confirm password is required'})
+    password2=forms.CharField(widget=forms.PasswordInput(attrs={'aria-label':'password2','class':'form-control','placeholder':'Enter confirm password','autocomplete':'on'}),error_messages={'required':'Confirm password is required'})
     class Meta:
         model=User
         fields=['username','email','password1','password2','is_active',]
