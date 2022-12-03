@@ -41,9 +41,34 @@ class UserResetPassword(PasswordResetForm):
         return email
 
 
+
+#ChooseForm
+class ChooseForm(UserChangeForm):
+    username=forms.CharField(widget=forms.TextInput(attrs={'style':'height:50px;', 'aria-required':'true','class':'form-control','placeholder':'Username ','aria-label':'username'}),error_messages={'required':'Username  is required'})
+
+    class Meta:
+        model=User
+        fields=['username']
+
+    def clean_username(self):
+        username=self.cleaned_data['username']
+        if self.instance.username:
+            if username != self.instance.username:
+                if User.objects.filter(username=username).exists():
+                    raise forms.ValidationError('A user with this username already exists')
+                return username
+            else:
+               return username
+        else:
+            if User.objects.filter(username=username).exists():
+                raise forms.ValidationError('A user with this username already exists')
+            return username
+
+
+
 class UserLoginForm(forms.Form):
-    username=forms.CharField(widget=forms.TextInput(attrs={'aria-required':'true','class':'form-control','placeholder':'Username ','aria-label':'username'}),error_messages={'required':'Username  is required'})
-    password=forms.CharField(widget=forms.PasswordInput(attrs={'aria-required':'true','class':'form-control login-password','placeholder':'Password','aria-label':'password','autocomplete':'on'}),error_messages={'required':'Password is required'})
+    username=forms.CharField(widget=forms.TextInput(attrs={'style':'height:50px;', 'aria-required':'true','class':'form-control','placeholder':'Username ','aria-label':'username'}),error_messages={'required':'Username  is required'})
+    password=forms.CharField(widget=forms.PasswordInput(attrs={'style':'height:50px;','aria-required':'true','class':'form-control login-password','placeholder':'Password','aria-label':'password','autocomplete':'on'}),error_messages={'required':'Password is required'})
 
     class Meta:
         model=User
@@ -58,13 +83,12 @@ class UserLoginForm(forms.Form):
 
 class UserReg(UserCreationForm):
     email=forms.EmailField(widget=forms.EmailInput(attrs={'aria-label':'email','class':'form-control','placeholder':'Enter email address'}),error_messages={'required':'Email address is required'})
-    username=forms.CharField(widget=forms.TextInput(attrs={'aria-label':'username','class':'form-control','placeholder':'Enter username'}),error_messages={'required':'Username is required'})
     password1=forms.CharField(min_length=6,widget=forms.PasswordInput(attrs={'aria-label':'password1','class':'form-control','placeholder':'Enter password','autocomplete':'on'}),error_messages={'required':'Password is required','min_length':'enter atleast 6 characters long'})
     is_active=forms.BooleanField(widget=forms.CheckboxInput(attrs={'aria-label':'is_active','id':'checkbox1'}),required=False)
     password2=forms.CharField(widget=forms.PasswordInput(attrs={'aria-label':'password2','class':'form-control','placeholder':'Enter confirm password','autocomplete':'on'}),error_messages={'required':'Confirm password is required'})
     class Meta:
         model=User
-        fields=['username','email','password1','password2','is_active',]
+        fields=['email','password1','password2','is_active',]
 
 
     def clean_email(self):
@@ -104,9 +128,9 @@ class ExtEmailReg(forms.ModelForm):
 #profileForm
 class CurrentStaffLoggedInUserProfileChangeForm(UserChangeForm):
     first_name=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded'}),required=False)
-    last_name=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'last_name'}),error_messages={'required':'Last name is required'})
-    username=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','placeholder':'Username ','aria-label':'username'}),error_messages={'required':'Username is required'})
-    email=forms.EmailField(widget=forms.EmailInput(attrs={'class':'form-control input-rounded','aria-label':'email'}),error_messages={'required':'Email address is required'})
+    last_name=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'last_name'}),required=False)
+    username=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','placeholder':'Username ','aria-label':'username'}),required=False)
+    email=forms.EmailField(widget=forms.EmailInput(attrs={'class':'form-control input-rounded','aria-label':'email'}),required=False)
     is_active=forms.BooleanField(widget=forms.CheckboxInput(attrs={'aria-label':'is_active','id':'checkbox1'}),required=False)
     class Meta:
         model=User
@@ -115,19 +139,19 @@ class CurrentStaffLoggedInUserProfileChangeForm(UserChangeForm):
 
     def clean_first_name(self):
         first_name=self.cleaned_data['first_name']
-        if not str(first_name).isalpha():
-                raise forms.ValidationError('only characters are allowed.')
+        if first_name and not str(first_name).isalpha():
+            raise forms.ValidationError('only characters are allowed.')
         return first_name
     
     def clean_last_name(self):
         last_name=self.cleaned_data['last_name']
-        if not str(last_name).isalpha():
+        if last_name and not str(last_name).isalpha():
                 raise forms.ValidationError('only characters are allowed.')
         return last_name
 
     def clean_email(self):
         email=self.cleaned_data['email']
-        if email != self.instance.email:
+        if email and email != self.instance.email:
             if User.objects.filter(email=email).exists():
                 raise forms.ValidationError('A user with this email already exists.')
             try:
@@ -140,16 +164,16 @@ class CurrentStaffLoggedInUserProfileChangeForm(UserChangeForm):
 
     def clean_username(self):
         username=self.cleaned_data['username']
-        if username != self.instance.username:
+        if username and username != self.instance.username:
             if User.objects.filter(username=username).exists():
                 raise forms.ValidationError('A user with this username already exists')
             return username
         return username
 
 class UserPasswordChangeForm(UserCreationForm):
-    oldpassword=forms.CharField(widget=forms.PasswordInput(attrs={'aria-required':'true','class':'form-control input-rounded','placeholder':'Old password','aria-label':'oldpassword'}),error_messages={'required':'Old password is required','min_length':'enter atleast 6 characters long'})
-    password1=forms.CharField(widget=forms.PasswordInput(attrs={'aria-required':'true','class':'form-control input-rounded','placeholder':'New password Eg Example12','aria-label':'password1'}),error_messages={'required':'New password is required','min_length':'enter atleast 6 characters long'})
-    password2=forms.CharField(widget=forms.PasswordInput(attrs={'aria-required':'true','class':'form-control input-rounded','placeholder':'Confirm new password','aria-label':'password2'}),error_messages={'required':'Confirm new password is required'})
+    oldpassword=forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete':'on','aria-required':'true','class':'form-control input-rounded','placeholder':'Old password','aria-label':'oldpassword'}),error_messages={'required':'Old password is required','min_length':'enter atleast 6 characters long'})
+    password1=forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete':'on','aria-required':'true','class':'form-control input-rounded','placeholder':'New password Eg Example12','aria-label':'password1'}),error_messages={'required':'New password is required','min_length':'enter atleast 6 characters long'})
+    password2=forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete':'on','aria-required':'true','class':'form-control input-rounded','placeholder':'Confirm new password','aria-label':'password2'}),error_messages={'required':'Confirm new password is required'})
 
     class Meta:
         model=User
@@ -165,25 +189,30 @@ class UserPasswordChangeForm(UserCreationForm):
 
 class ProfilePicForm(forms.ModelForm):
     profile_pic=forms.ImageField(
-                                widget=forms.FileInput(attrs={'class':'profile','accept':'image/*','hidden':True}),
+                                widget=forms.FileInput(attrs={'class':'profile','accept':'image/*', 'onchange':'this.form.submit();','id':'profileImage'}),
+                                required=False,
+                                validators=[FileExtensionValidator(['jpg','jpeg','png','gif'],message="Invalid image extension",code="invalid_extension")]
+                                )
+    cover_pic=forms.ImageField(
+                                widget=forms.FileInput(attrs={'class':'profile','accept':'image/*', 'onchange':'this.form.submit();','id':'file-up'}),
                                 required=False,
                                 validators=[FileExtensionValidator(['jpg','jpeg','png','gif'],message="Invalid image extension",code="invalid_extension")]
                                 )
     class Meta:
         model=ExtendedAuthUser
-        fields=['profile_pic',]
+        fields=['profile_pic','cover_pic',]
 
 # admin profileForm
 class CurrentAdminExtUserProfileChangeForm(forms.ModelForm):
     phone=PhoneNumberField(widget=PhoneNumberPrefixWidget(attrs={'class':'form-control input-rounded','type':'tel','aria-label':'phone','placeholder':'Phone example +25479626...'}),required=False)
-    bio=forms.CharField(widget=forms.Textarea(attrs={'class':'form-control','aria-label':'email'}),required=False)
-    nickname=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'nickname'}),error_messages={'required':'Nickname is required'})
+    bio=forms.CharField(widget=forms.Textarea(attrs={'rows':5,'col':10,'class':'form-control','aria-label':'email'}),required=False)
+    nickname=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'nickname'}),required=False)
     company=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'company'}),required=False)
-    timezone=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'timezone'}))
-    zipcode=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'zipcode'}))
+    timezone=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'timezone'}),required=False)
+    zipcode=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'zipcode'}),required=False)
     city=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'city'}),required=False)
     country=forms.CharField(widget=forms.TextInput(attrs={'class':'form-control input-rounded','aria-label':'country'}),required=False)
-    gender=forms.ChoiceField(choices=options, error_messages={'required':'Gender is required','aria-label':'gender'},widget=forms.Select(attrs={'class':'form-control show-tick ms select2','placeholder':'Gender'}))
+    gender=forms.ChoiceField(choices=options,required=False,widget=forms.Select(attrs={'class':'form-control show-tick ms select2','placeholder':'Gender'}))
     birthday=forms.DateField(widget=forms.DateInput(attrs={'class':'form-control','aria-label':'birthday','type':'date'}),required=False)   
     profile_pic=forms.ImageField(
                                 widget=forms.FileInput(attrs={'class':'profile','accept':'image/*','hidden':True}),
@@ -417,7 +446,32 @@ class WorkingConfigForm(forms.ModelForm):
         fields=['working_days','working_hours',]
 
 class ChatForm(forms.ModelForm):
-    message=forms.CharField(widget=forms.Textarea(attrs={'rows':1,'cols':2,'aria-label':'message','class':'form-control','placeholder':'Enter message','style':'padding-right:40px;'}),error_messages={'required':'Message is required','min_lenghth':'enter atleast 10 characters long message'})
+    message=forms.CharField(widget=forms.Textarea(attrs={'aria-label':'message','class':'status form-control','placeholder':'Enter message...','rows':3,'cols':'100%' ,'style':'font-size:17px;'}),error_messages={'required':'Message is required'})
     class Meta:
         model=ChatModel
         fields=['message',]
+
+
+class TweetForm(forms.ModelForm):
+    message=forms.CharField(widget=forms.Textarea(attrs={'aria-label':'message','class':'status form-control','maxlength':1000,'placeholder':'Whats happening?','rows':3,'cols':'100%' ,'style':'font-size:17px;'}),error_messages={'required':'Message is required'})
+    tweet_image=forms.ImageField(
+                                widget=forms.FileInput(attrs={'aria-label':'tweet_image','class':'profile','accept':'image/*','id':'file'}),
+                                required=False,
+                                validators=[FileExtensionValidator(['jpg','jpeg','png','gif'],message="Invalid image extension",code="invalid_extension")]
+                                )
+    class Meta:
+        model=TweetModel
+        fields=['message','tweet_image',]
+
+class CommentForm(forms.ModelForm):
+    comment=forms.CharField(widget=forms.Textarea(attrs={'aria-label':'comment','class':'status form-control','maxlength':1000,'placeholder':'Whats happening?','rows':3,'cols':'100%' ,'style':'font-size:17px;'}),error_messages={'required':'Comment is required'})
+    class Meta:
+        model=CommentModel
+        fields=['comment',]
+
+
+class RetweetForm(forms.ModelForm):
+    retweet_message=forms.CharField(widget=forms.Textarea(attrs={'aria-label':'retweet_message','class':'status form-control','maxlength':1000,'placeholder':'Whats happening?','rows':3,'cols':'100%' ,'style':'font-size:17px;'}),error_messages={'required':'Message is required'})
+    class Meta:
+        model=TweetModel
+        fields=['retweet_message',]

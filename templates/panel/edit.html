@@ -1,0 +1,155 @@
+{% extends 'panel/home.html' %}
+{% load static %}
+{% load humanize %}
+{% block home %}
+ <div class="main">
+    <p class="page_title mb-0"><i class="ti-pencil  mr-4" style="color:#50b7f5;"></i>Edit Profile</p>
+    <div class='profile-box'>
+        <div class='profile-cover mt-0'>
+            <!-- PROFILE-IMAGE -->
+            <img class="img-responsive" src="{{data.extendedauthuser.cover_pic.url}}" />
+            <div class="img-upload-button-wrap">
+                <div class="img-upload-button1">
+                    <label for="cover-upload-btn">
+                        <i class="ti-camera" aria-hidden="true"></i>
+                    </label>
+                    <span class="span-text1">
+                        Change your profile photo
+                    </span>
+                    <input id="cover-upload-btn" type="checkbox" />
+                    <div class="img-upload-menu1">
+                        <span class="img-upload-arrow"></span>
+                        <form action="{% url 'cover pic' %}"  method="POST" enctype="multipart/form-data" autocomplete="off" novalidate>
+                            {% csrf_token %}
+                            <ul>
+                                <li>
+                                    <label for="file-up">
+                                        Upload photo
+                                    </label>
+                                    {{profileform.cover_pic}}
+                                </li>
+                                <li>
+                                    <label for="img-upload-btn">
+                                        <a href="{% url 'remove cover pic' %}">Remove</a>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label for="cover-upload-btn">
+                                        Cancel
+                                    </label>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='profile-body'>
+            <div class="profile-header">
+                <div class="profile-image">
+                    <img class="img-responsive" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{data.extendedauthuser.profile_pic.url}}" alt="{{data.username}}" />
+                    <div class="img-upload-button-wrap1">
+                        <div class="img-upload-button">
+                            <label for="img-upload-btn">
+                                <i class="ti-camera" aria-hidden="true"></i>
+                            </label>
+                            <input id="img-upload-btn" type="checkbox" />
+                            <div class="img-upload-menu">
+                                <span class="img-upload-arrow"></span>
+                                <form  action="{% url 'profile pic' %}"  method="POST" enctype="multipart/form-data" autocomplete="off" novalidate>
+                                    {% csrf_token %}
+                                    <ul>
+                                        <li>
+                                            <label for="profileImage">
+                                                Upload photo
+                                            </label>
+                                            {{profileform.profile_pic}}
+                                        </li>
+                                        <li>
+                                            <label for="img-upload-btn">
+                                                <a href="{% url 'remove profile pic' %}">Remove</a>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label for="img-upload-btn">
+                                                Cancel
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- img upload end-->
+                    </div>
+                </div>
+                <div class="edit-button d-flex">
+                    <span>
+                        <button class="new-btn mr-3" type="button" onclick=location.href="{% url 'profile'  username=data.username %}" value="Cancel" style="outline:none;">Cancel</button>
+                    </span>
+                    <span>
+                        <button class="new-btn" type="button" id="save" style="outline:none;">Save</button>
+                    </span>
+                </div>
+            </div>
+            <div class="profile-text">
+                <form class="ActiveForm" method="POST" enctype="multipart/form-data" autocomplete="off" novalidate>
+                    {% csrf_token %} 
+                    <div class="form-group">
+                        <label class="ml-1">Email address</label>
+                        {{form.email}}
+                        <div class="feedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="ml-1">Location</label>
+                        {{eform.country}}
+                        <div class="feedback"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group d-none">
+                                {{form.username}}
+                                <div class="feedback"></div>
+                            </div>
+                        </div> 
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="ml-1">First Name</label>
+                                {{form.first_name}}
+                                <div class="feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="ml-1">Last Name</label>
+                                {{form.last_name}}
+                                <div class="feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-bio-wrap">
+                        <div class="form-group">
+                            <label class="ml-1">Bio</label>
+                            {{eform.bio}}
+                            <div class="hash-box">
+                                <ul>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 col-12 d-none">
+                        <div class="form-group">
+                            {{form.is_active}}
+                            <div class="feedback"></div>
+                        </div>
+                    </div>
+                </form>
+                <script type="text/javascript">
+                $('#save').click(function() {
+                    $('.ActiveForm').submit();
+                });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

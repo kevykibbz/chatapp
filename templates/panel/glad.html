@@ -1,0 +1,49 @@
+{% extends 'panel/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block body %}
+<div class="container-fluid">
+   <div class="main-box">
+      <div class="main-box-wrapper">
+         <div class="row">
+            <div class="left col-md-6 col-12">
+                 <div class="items-wrapper">
+                     <div class="item">
+                         <span class="ti-search"></span>
+                         <h3>Follow your interests.</h3>
+                     </div>
+                     <div class="item">
+                         <span class="ti-user"></span>
+                         <h3>Hear what your people are talking about.</h3>
+                     </div>
+                     <div class="item">
+                         <span class="ti-comments"></span>
+                         <h3>Join the conversation.</h3>
+                     </div>
+                 </div>
+             </div>
+             <div class="right col-md-6 col-12">
+               <div class="row">
+                  <div class="col-12 p-2">
+			        <div class='step-letsgo'>
+			            <h3>We're glad you're here, kevin </h3>
+			            <p class="text-capitalize">{{obj.site_name}} is a constantly updating stream of the coolest, most important news, media, sports, TV, conversations and more--all tailored just for you.
+			            <br>
+			                Tell us about all the stuff you love and we'll help you get set up.
+			            </p>
+			            <span>
+			                <a href="{% url 'dashboard' %}" class='backButton' style="color:var(--twitter-color);">Let's go!</a>
+			            </span>
+			        </div>
+                  </div>
+                  <div class="col-12">
+                     <hr>
+                     <p class="text-center"> &copy;{% now 'Y' %} {{obj.site_name}}.Developed by <a target="_blank" href="designer_link">{{designer_name}}</a></p>
+                  </div>
+               </div>
+             </div>
+            </div>
+        </div>
+   </div>
+</div>
+{% endblock %}

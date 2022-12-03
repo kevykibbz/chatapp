@@ -1,0 +1,216 @@
+{% extends 'panel/home.html' %}
+{% load static %}
+{% load humanize %}
+{% block home %}
+<div class="main">
+    <div class=''>
+        <div class=''>
+            <p class="page_title sticky-top mb-0">Home</p>
+            <div class='tweet_box tweet_add'>
+                <div class='left-tweet ml-3'>
+                    <img class="img-responsive" src="{% static 'panel/assets/images/loader.gif' %}" style="width: 53px;height:53px;border-radius:50%;" data-src="{{data.extendedauthuser.profile_pic.url}}" alt="{{data.username}}"/>
+                </div>
+                <div class='tweet_body'>
+                    <form class="ActiveForm" method="POST"  enctype="multipart/form-data" autocomplete="off" novalidate>
+                        {{form.message}}
+                        <div class='hash-box'>
+                            <ul>
+                            </ul>
+                        </div>
+                        <div class='tweet_icons-wrapper'>
+                            <div class='t-fo-left tweet_icons-add'>
+                                <ul>
+                                    <input type='file' name='tweet_image' id='file' />
+                                    <li><label for='file'><i class='fa fa-image' aria-hidden='true'></i></label>
+                                        <i class="fa fa-bar-chart"></i>
+                                        <i class="fa fa-smile-o"></i>
+                                        <i class="fa fa-calendar-o"></i>
+                                    </li>
+                                    <span class='tweet-error'></span>
+                                </ul>
+                            </div>
+                            {% csrf_token %}
+                            <div class='t-fo-right'>
+                                <button class="button_tweet" type="submit" name="tweet" style="outline:none;">Tweet</button>
+                            </div>
+                        </div>
+                    </form>  
+                </div>
+            </div>
+        </div>
+        <div class="space" style="height:10px; width:100%; background:rgba(230, 236, 240, 0.5);"></div>
+        <div class='tweets'>
+            {% for tweet in tweets %}
+            {% if tweet.is_retweet %}
+            <div class="all-tweet">
+                <div class="t-show-wrap">
+                   <div class="t-show-inner">
+                        <div class="t-show-head">
+                            <div class="t-show-popup" data-tweet="10">
+                              <div class="t-show-img">
+                                    <img src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{tweet.user.extendedauthuser.profile_pic.url}}"/>
+                                </div>
+                                 <div class="t-s-head-content ">
+                                    <div class="t-h-c-name media-body">
+                                        <span><a href="{% url 'profile' username=tweet.user.username %}">{{tweet.user.get_full_name|default:tweet.user.username}}</a></span>
+                                        <span>@{{tweet.user.username}}</span> &bull;
+                                        <span>{{tweet.created_on|naturaltime}}</span>
+                                    </div>
+                                    <div class="t-h-c-dis">
+                                        {{tweet.retweet_message}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="t-s-b-inner">
+                                <div class="t-s-b-inner-in">
+                                    <div class="retweet-t-s-b-inner">
+                                        <div>
+                                            <div class="t-h-c-name">
+                                                <span><a href="{% url 'profile' username=tweet.user.username %}">{{tweet.user.get_full_name|default:tweet.user.username}}</a></span>
+                                                <span>@{{tweet.user.username}}</span>
+                                                <span>{{tweet.created_on|naturaltime}}</span>
+                                            </div>
+                                            <div class="retweet-t-s-b-inner-right-text">
+                                                {{tweet.message}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="t-show-footer">
+                            <div class="t-s-f-right">
+                                <ul>
+                                    <li>
+                                        <button style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
+                                            <span class="retweetsCount">{{tweet.comment_count|intcomma|default:0}}</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="retweet" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-retweet" aria-hidden="true"></i>
+                                            <span class="retweetsCount">{{tweet.retweet_count|intcomma|default:0}}</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="like-btn" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-heart" aria-hidden="true"></i>
+                                            {% if tweet.likes_count > 0 %}
+                                            <span class="likesCounter">{{tweet.likes_count|intcomma}}</span>
+                                            {% endif %}
+                                        </button>
+                                    </li>
+                                    {% if tweet.user_id == data.id %}
+                                    <li>
+                                        <a href="#" class="more">
+                                            <i class="fa fa-ellipsis-h" aria-hidden="true" style="outline:none;"></i>
+                                        </a>
+                                        <ul>
+                                          <li><a class="delete-button" data-url="{% url 'delete tweet' id=tweet.id %}" href="javascript:void(0);"><label class="deleteTweet" data-tweet="{{tweet.id}}">Delete Tweet</label></a></li>
+                                        </ul>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="all-tweet infinite-item">
+                <div class="t-show-wrap">
+                   <div class="t-show-inner">
+                        <div class="t-show-popup" data-tweet="{{tweet.id}}">
+                            <div class="t-show-head">
+                                <div class="t-show-img">
+                                    <img src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{tweet.user.extendedauthuser.profile_pic.url}}"/>
+                                </div>
+                                <div class="t-s-head-content ">
+                                    <div class="t-h-c-name media-body">
+                                        <span><a href="{% url 'profile' username=tweet.user.username %}">{{tweet.user.get_full_name|default:tweet.user.username}}</a></span>
+                                        <span>@{{tweet.user.username}}</span> &bull;
+                                        <span>{{tweet.created_on|naturaltime}}</span>
+                                    </div>
+                                    <div class="t-h-c-dis">
+                                        {{tweet.message}}
+                                    </div>
+                                </div>
+                            </div>
+                            {% if tweet.tweet_image %}
+                            <div class="t-show-body">
+                              <div class="t-s-b-inner">
+                               <div class="t-s-b-inner-in">
+                                 <img src="{{tweet.tweet_image.url}}" class="imagePopup" data-tweet="{{tweet.id}}"/>
+                               </div>
+                              </div>
+                            </div> 
+                            {% endif %}                     
+                        </div>
+                        <div class="t-show-footer">
+                            <div class="t-s-f-right">
+                                <ul>
+                                    <li>
+                                        <button style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
+                                            <span class="retweetsCount">{{tweet.comment_count|intcomma|default:0}}</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="retweet" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-retweet" aria-hidden="true"></i>
+                                            <span class="retweetsCount">{{tweet.retweet_count|intcomma|default:0}}</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="like-btn" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-heart" aria-hidden="true"></i>
+                                            <span class="likesCounter">{{tweet.likes_count|intcomma}}</span>
+                                        </button>
+                                    </li>
+                                    {% if tweet.user_id == data.id %}
+                                    <li>
+                                        <a href="#" class="more">
+                                            <i class="fa fa-ellipsis-h" aria-hidden="true" style="outline:none;"></i>
+                                        </a>
+                                        <ul>
+                                          <li><a class="delete-button" data-url="{% url 'delete tweet' id=tweet.id %}" href="javascript:void(0);"><label class="deleteTweet" data-tweet="{{tweet.id}}">Delete Tweet</label></a></li>
+                                        </ul>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <div class="all-tweet">
+                <div class="t-show-wrap">
+                    <p class="text-center py-5"><b><i class="ti-info-alt text-info"></i> No tweet(s) found</b></p>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="all-tweet displayer" style="display:none">
+                <div class="t-show-wrap">
+                    <p class="text-center py-5"><b><i class="spinner-border spinner-border-sm text-info"></i> Loading...</b></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="mt-2 ml-2 col-12">
+                    {% if tweets.has_next %}
+                        <a class="infinite-more-link" href="{% url 'dashboard' %}?page={{tweets.next_page_number}}">next</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var infinite=new Waypoint.Infinite({
+        element:$('.tweets')[0],
+        offset:'bottom-in-view',
+        onBeforePageLoad:function(){
+           $('.displayer').show();
+        },
+        onAfterPageLoad:function(){
+           $('.displayer').hide();
+        }
+    });
+</script>
+{% endblock %}

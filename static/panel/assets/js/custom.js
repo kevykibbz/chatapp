@@ -50,69 +50,90 @@ $(document).on('submit','.ActiveForm',function()
       beforeSend:function()
       {
         el.parent().find('button').html('Please wait...').attr('disabled',true);
+        $('#save').html('...').attr('disabled',true);
       },
       success:function(callback)
       {
-        
         el.parent().find('button').html(btn_txt).attr('disabled',false);
-        if(callback.login)
-        {
-          if(next)
-          {
+        $('#save').html('save').attr('disabled',false);
+        if(callback.login){
+          if(next){
               window.location=next;
-          }
-          else
-          {
-              window.location='/chatroom';
+          }else{
+              window.location='/dashboard';
           }
         }
 
-        if(callback.register)
-        {
-          window.location='/chatroom';
+        if(callback.chat){
+          el[0].reset();
+          el.find("textarea[aria-label='message']").removeClass('is-invalid').addClass('is-valid').parent().find('.feedback').removeClass('text-danger').addClass('text-success').html('<span class="fa fa-check-circle"></span> '+callback.new_message);
+          if($('.chat_window ul').children('li').length > 0){
+              $('.chat_window ul').append(`<li class="clearfix">
+                                            <div class="status online message-data text-right">
+                                                <span class="time">${callback.time}</span>
+                                                <span class="name"  style="color:#50b7f5;">${callback.name?callback.name:callback.current_username}</span>
+                                                <i class="zmdi zmdi-circle me"></i>
+                                            </div>
+                                            <div class="message  my-message float-right"><p>${callback.submitted_message}</p></div>
+                                        </li>`);
+            }else{
+              $('.chat_window ul').html(`<li class="clearfix">
+                                            <div class="status online message-data text-right">
+                                                <span class="time">${callback.time}</span>
+                                                <span class="name"  style="color:#50b7f5;">${callback.name?callback.name:callback.current_username}</span>
+                                                <i class="zmdi zmdi-circle me"></i>
+                                            </div>
+                                            <div class="message  my-message float-right"><p>${callback.submitted_message}</p></div>
+                                        </li>`);
+            }
+            $('.chat_window_list').animate({scrollTop:$(document).height()},'slow');
+        }
+
+        if(callback.comment){
+          el[0].reset();
+          buildComment(el,callback)
+        }
+
+        if(callback.username){
+          window.location='/welcome/to/the/community';
         } 
 
-        if(callback.valid)
-        {   
+        if(callback.retweeted){
+          el.find("input[aria-label='retweet_message']").removeClass('is-invalid').addClass('is-valid').parent().find('.feedback').removeClass('text-danger').addClass('text-success').html('<span class="fa fa-check-circle"></span> '+callback.message);
+        } 
+
+        if(callback.register){
+          window.location='/account/'+callback.email;
+        } 
+
+        if(callback.valid){   
             $('.small-model').modal({show:true});
             $('.small-model').find('.modal-title').text('Success');
             $('.small-model').find('.modal-body').html('<div class="text-success text-center"><i class="fa fa-check-circle"></i> '+callback.message+'.</div>'); 
-            if(callback.chat)
+            
+            if(callback.tweet)
             {
-                el[0].reset();
-                el.find("input[aria-label='message']").parents('.wrapper').find('.feedback').css('color','#5cb85c !important').html('<i class="fa fa-check-circle"></i> '+callback.new_message);
-                if($('.chat_windows ul').children('li').length > 0)
-                {
-                  $('.chat_windows ul').append(`<li class="my-message">
-                                              <img class="avatar mr-3" src="${callback.profiler}"    alt="${callback.name}">
-                                              <div class="message">
-                                                  <p class="bg-light-blue">${callback.submitted_message}</p>
-                                                  <span class="time" >${callback.time}</span>
-                                              </div>
-                                          </li>`);
-                }
-                else
-                {
-                   $('.chat_windows ul').html(`<li class="my-message">
-                                              <img class="avatar mr-3" src="${callback.profiler}"    alt="${callback.name}">
-                                              <div class="message">
-                                                  <p class="bg-light-blue">${callback.submitted_message}</p>
-                                                  <span class="time" >${callback.time}</span>
-                                              </div>
-                                          </li>`);
-                }
-                $('.chat_window_list').animate({scrollTop:$(document).height()},'slow');
+              el[0].reset();
+              $('<div class="error-banner"><div class="error-banner-inner"><p id="errorMsg">'+callback.message+'</p></div></div>').insertBefore('.header-wrapper');
+              $('.error-banner').hide().slideDown(300).delay(5000).slideUp(300);
+              $('.popup-tweet-wrap').hide();
+              var elements=$('.tweets').children('.all-tweet').length;
+              if(elements < 2){
+                buildTweet('html',callback)
+              }else{
+                buildTweet('prepend',callback)
+              }
             }
         }
         else
         {
             $.each(callback.uform_errors,function(key,value)
             {
-              el.find("input[aria-label='"+key+"']").addClass('is-invalid').parent().find('.feedback').addClass('text-danger').html('<span class="fa fa-exclamation-circle"></span> '+value);
+              el.find("input[aria-label='"+key+"'],textarea[aria-label='"+key+"']").addClass('is-invalid').parent().find('.feedback').addClass('text-danger').html('<span class="fa fa-exclamation-circle"></span> '+value);
             });
             $.each(callback.eform_errors,function(key,value)
             {
-              el.find("input[aria-label='"+key+"']").addClass('is-invalid').parent().find('.feedback').addClass('text-danger').html('<span class="fa fa-exclamation-circle"></span> '+value);
+              el.find("input[aria-label='"+key+"'],textarea[aria-label='"+key+"']").addClass('is-invalid').parent().find('.feedback').addClass('text-danger').html('<span class="fa fa-exclamation-circle"></span> '+value);
             });
 
         }
@@ -120,74 +141,12 @@ $(document).on('submit','.ActiveForm',function()
       error:function(err)
       {
         el.parent().find('button').html(btn_txt).attr('disabled',false);
+        $('#save').html('save').attr('disabled',false);
       }
     });
   return false;
 });
 
-const roomName = JSON.parse(document.getElementById('room-name').textContent);
-const notificationSocket = new WebSocket('wss://'+ window.location.host + '/notification/'+ roomName);
-notificationSocket.onopen = function(e)
-{
-  UpdateStatus(is_online=true)
-}
-notificationSocket.onmessage = function(e)
-{
-    const data = JSON.parse(e.data);
-    if(data.message)
-    {
-      var audio = new Audio('/static/panel/assets/audio/notification_sound.mp3');
-      audio.play();
-
-      if($('.chat_windows ul').children('li').length > 0)
-      {
-         $('.chat_windows ul').append(`<li class="other-message">
-                                            <img class="avatar mr-3" src="${data.profile}"    alt="${data.name}">
-                                            <div class="message">
-                                                <p class="bg-light-blue">${data.activity}</p>
-                                                <span class="time" >${data.time}</span>
-                                            </div>
-                                        </li>`);
-      }
-      else
-      {
-         $('.chat_windows ul').html(`<li class="other-message">
-                                            <img class="avatar mr-3" src="${data.profile}"    alt="${data.name}">
-                                            <div class="message">
-                                                <p class="bg-light-blue">${data.activity}</p>
-                                                <span class="time" >${data.time}</span>
-                                            </div>
-                                        </li>`);
-      }
-      $('.chat_window_list').animate({scrollTop:$(document).height()},'slow');
-    }
-};
-notificationSocket.onclose = function(e)
-{
-  UpdateStatus(is_online=false)
-  console.error('Notification socket closed unexpectedly');
-};
-
-function UpdateStatus(is_online)
-{
-   var form_data=new FormData()
-   form_data.append('status',is_online)
-   url='/update/status';
-   $.ajax(
-    {
-      url:url,
-      dataType:'json',
-      data:form_data,
-      processData:false,
-      contentType:false,
-      cache:false,
-      success:function(callback){},
-      error(err)
-      {
-        console.log(err.status+':'+err.statusText);
-      }
-    });
-}
 
 $(document).on('change','input[type=file]',function()
 {
@@ -444,4 +403,288 @@ $(document).on('change','.profile',function()
       $('.small-model').find('.modal-title').text('Warning');
       $('.small-model').find('.modal-body').html('<div class="text-warning text-center"><i class="zmdi zmdi-alert-triangle"></i> Invalid image format</div>');
     }
+});
+
+function buildComment(el,callback){
+  var output=``;
+  $.each(callback.data,function(key,value){
+    output+=`<div class="tweet-show-popup-comment-box">
+            <div class="tweet-show-popup-comment-inner">
+              <div class="tweet-show-popup-comment-head">
+                <div class="tweet-show-popup-comment-head-left">
+                   <div class="tweet-show-popup-comment-img">
+                    <img src="${callback.response.profile}">
+                   </div>
+                </div>
+                <div class="tweet-show-popup-comment-head-right">
+                    <div class="tweet-show-popup-comment-name-box">
+                    <div class="tweet-show-popup-comment-name-box-name"> 
+                      <a href="/${callback.response.username}">${callback.response.name}</a>
+                    </div>
+                    <div class="tweet-show-popup-comment-name-box-tname">
+                      <a href="/${callback.response.username}">@${callback.response.username}</a>
+                    </div>
+                   </div>
+                   <div class="tweet-show-popup-comment-right-tweet">
+                      <p><a href="/${callback.response.username}">@${callback.response.username}</a> ${value.comment}</p>
+                   </div>
+                  <div class="tweet-show-popup-footer-menu">
+                    <ul>
+                      <li><button><i class="fa fa-share" aria-hidden="true"></i></button></li>
+                      <li>
+                          <button class="comment-like-btn" data-comment="${value.id}" data-user="1" style="outline:none;">
+                            <i class="fa fa-heart" aria-hidden="true"></i>
+                                <span class="likesCounter">0</span>
+                            </button>
+                      </li>
+                      <li>
+                        <a href="#" class="more"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
+                        <ul> 
+                           <li>
+                              <a class="delete-button" data-url="/delete/comment/${value.id}" href="javascript:void(0);"><label class="deleteComment text-info" data-tweet="{{comment.id}}">Delete Comment</label></a>
+                            </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--TWEET SHOW POPUP COMMENT inner END-->
+            </div>`;
+  });
+  $('#comments').html(output);
+  $('#comments_count').html(callback.response.comments_count)
+}
+
+
+$(document).on('click','.delete-button',function()
+  {
+    var el=$(this),
+    url=el.data('url');
+    elements=$('.tweets,#comments').children('.all-tweet,.infinite-item').length;
+    elements1=$('#comments').children('.infinite-item').length;
+    $.ajax(
+    {
+      url:url,
+      dataType:'json',
+      beforeSend:function()
+      {
+        el.html('<i class="spinner-border spinner-border-sm" role="status"></i> Please wait...');
+      },
+      success:function(callback)
+      {
+        $('#comments_count').html(callback.comment_count);
+        if(elements < 2){
+          $('.tweets').html(`<div class="t-show-wrap"><p class="text-center py-5"><b><i class="ti-info-alt text-info"></i> No tweet(s) found</b></p></div>`);
+        }else{
+          el.parents('.all-tweet').remove();
+        }
+        if(elements1 < 2){
+          $('#comments').html(`<div class="infinite-item tweet-show-popup-comment-box"><div class="tweet-show-popup-comment-inner" ><p class="text-center py-5"><b><i class="ti-info-alt text-info"></i> No comment(s) found</b></p></div></div>`);
+        }else{
+          el.parents('.infinite-item').remove();
+        }
+      },
+      error(err)
+      {
+        console.log(err.status+':'+err.statusText);
+      }
+    });
+  });
+
+function buildTweet(action,callback){
+  if(action == 'html'){
+  $('.tweets').html(`<div class="all-tweet">
+                      <div class="t-show-wrap">
+                         <div class="t-show-inner">
+                              <div class="t-show-popup" data-tweet="${callback.tweet_id}">
+                                  <div class="t-show-head">
+                                      <div class="t-show-img">
+                                          <img src="${callback.response.profile}"/>
+                                      </div>
+                                      <div class="t-s-head-content ">
+                                          <div class="t-h-c-name media-body">
+                                              <span><a href="/${callback.response.profile}">${callback.response.name?callback.response.name:callback.response.username}</a></span>
+                                              <span>@${callback.response.username}</span> &bull;
+                                              <span>just now</span>
+                                          </div>
+                                          <div class="t-h-c-dis">${callback.tweeted_message}</div>
+                                      </div>
+                                  </div>
+                                  <div class="t-show-body">
+                                    <div class="t-s-b-inner">
+                                     <div class="t-s-b-inner-in">
+                                       <img src="${callback.image?callback.image:''}" class="imagePopup" data-tweet="${callback.tweet_id}"/>
+                                     </div>
+                                    </div>
+                                  </div> 
+                              </div>
+                              <div class="t-show-footer">
+                                  <div class="t-s-f-right">
+                                      <ul>
+                                          <li>
+                                              <button style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
+                                                  <span class="retweetsCount">0</span>
+                                              </button>
+                                          </li>
+                                          <li>
+                                              <button class="retweet" data-tweet="${callback.tweet_id}" data-user="${callback.response.user_id}" style="outline:none;"><i class="fa fa-retweet" aria-hidden="true"></i>
+                                                  <span class="retweetsCount">0</span>
+                                              </button>
+                                          </li>
+                                          <li>
+                                              <button class="like-btn" data-tweet="${callback.tweet_id}" data-user="${callback.response.user_id}" style="outline:none;"><i class="fa fa-heart" aria-hidden="true"></i>
+                                                  <span class="likesCounter">0</span>
+                                              </button>
+                                          </li>
+                                          <li>
+                                              <a href="#" class="more">
+                                                  <i class="fa fa-ellipsis-h" aria-hidden="true" style="outline:none;"></i>
+                                              </a>
+                                              <ul>
+                                                <li><a class="delete-button" data-url="/delete/tweet/${callback.tweet_id}" href="javascript:void(0);"><label class="deleteTweet" data-tweet="${callback.tweet_id}">Delete Tweet</label></a></li>
+                                              </ul>
+                                          </li>
+                                      </ul>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>`);
+  }else{
+    $('.tweets').prepend(`<div class="all-tweet">
+                      <div class="t-show-wrap">
+                         <div class="t-show-inner">
+                              <div class="t-show-popup" data-tweet="${callback.tweet_id}">
+                                  <div class="t-show-head">
+                                      <div class="t-show-img">
+                                          <img src="${callback.response.profile}"/>
+                                      </div>
+                                      <div class="t-s-head-content ">
+                                          <div class="t-h-c-name media-body">
+                                              <span><a href="/${callback.response.profile}">${callback.response.name?callback.response.name:callback.response.username}</a></span>
+                                              <span>@${callback.response.username}</span> &bull;
+                                              <span>just now</span>
+                                          </div>
+                                          <div class="t-h-c-dis">${callback.tweeted_message}</div>
+                                      </div>
+                                  </div>
+                                  <div class="t-show-body">
+                                    <div class="t-s-b-inner">
+                                     <div class="t-s-b-inner-in">
+                                       <img src="${callback.image?callback.image:''}" class="imagePopup" data-tweet="${callback.tweet_id}"/>
+                                     </div>
+                                    </div>
+                                  </div> 
+                              </div>
+                              <div class="t-show-footer">
+                                  <div class="t-s-f-right">
+                                      <ul>
+                                          <li>
+                                              <button style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
+                                                  <span class="retweetsCount">0</span>
+                                              </button>
+                                          </li>
+                                          <li>
+                                              <button class="retweet" data-tweet="${callback.tweet_id}" data-user="${callback.response.user_id}" style="outline:none;"><i class="fa fa-retweet" aria-hidden="true"></i>
+                                                  <span class="retweetsCount">0</span>
+                                              </button>
+                                          </li>
+                                          <li>
+                                              <button class="like-btn" data-tweet="${callback.tweet_id}" data-user="${callback.response.user_id}" style="outline:none;"><i class="fa fa-heart" aria-hidden="true"></i>
+                                                  <span class="likesCounter">0</span>
+                                              </button>
+                                          </li>
+                                          <li>
+                                              <a href="#" class="more">
+                                                  <i class="fa fa-ellipsis-h" aria-hidden="true" style="outline:none;"></i>
+                                              </a>
+                                              <ul>
+                                                <li><a class="delete-button" data-url="/delete/tweet/${callback.tweet_id}" href="javascript:void(0);"><label class="deleteTweet" data-tweet="${callback.tweet_id}">Delete Tweet</label></a></li>
+                                              </ul>
+                                          </li>
+                                      </ul>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>`);
+  }
+}
+
+$(function(){
+  var win = $(window);
+
+  win.scroll(function(){
+    if($(document).height() <= (win.height() + win.scrollTop())){
+    observerImages();
+    }
+  });
+});
+
+
+const roomName = JSON.parse(document.getElementById('room-name').textContent);
+const notificationSocket = new WebSocket('ws://'+ window.location.host + '/notification/'+ roomName);
+notificationSocket.onopen = function(e)
+{
+  UpdateStatus(is_online=true)
+}
+notificationSocket.onmessage = function(e)
+{
+    const data = JSON.parse(e.data);
+    console.log(data)
+    if(data.message)
+    {
+      var audio = new Audio('/static/panel/assets/audio/notification_sound.mp3');
+      audio.play();
+      $('.chat_window_list').animate({scrollTop:$(document).height()},'slow');
+      if($('.chat_window ul').children('li').length > 0)
+      {
+        $('.chat_window ul').append(`<li class="clearfix">
+                                            <div class="status online message-data text-left">
+                                                <i class="zmdi zmdi-circle me"></i>
+                                                <span class="name"  style="color:#50b7f5;">${data.name?data.name:data.username}</span>
+                                                <span class="time">${data.time}</span>
+                                            </div>
+                                            <div  class="message other-message text-left"><p>${data.activity}</p></div>
+                                        </li>`);
+      }
+      else
+      {
+         $('.chat_window ul').html(`<li class="clearfix">
+                                            <div class="status online message-data text-left">
+                                                <i class="zmdi zmdi-circle me"></i>
+                                                <span class="name"  style="color:#50b7f5;">${data.name?data.name:data.username}</span>
+                                                <span class="time">${data.time}</span>
+                                            </div>
+                                            <div class="message other-message text-left"><p>${data.activity}</p></div>
+                                        </li>`);
+      }
+    }
+};
+notificationSocket.onclose = function(e)
+{
+  UpdateStatus(is_online=false)
+  console.error('Notification socket closed unexpectedly');
+};
+
+function UpdateStatus(is_online)
+{
+   var form_data=new FormData()
+   $.get('/update/status', {status:is_online,}, function(data){
+     console.log(data)
+    });
+}
+
+
+$(document).on('click','.chatbtn',function(){
+  var user_id=$(this).data('user');
+  $('.chat-box').html('<p class="text-center py-5"><i class="spinner-border spinner-border-sm"></i> Loading...</p>')
+  $.get('/retrieve/chats', {user_id:user_id}, function(callback){
+      $('.chat-box').html(callback);
+      $('.chat_window_list').animate({scrollTop:$(document).height()},'slow');
+      $('.mobile-sidebar').toggleClass('active');
+      $('.message_counter').hide();
+  });
 });

@@ -1,0 +1,48 @@
+{% load static %}
+{% load humanize %}
+{% load filename %}
+<div class="retweet-popup">
+    <div class="wrap5">
+        <div class="retweet-popup-body-wrap">
+            <form  class="ActiveForm" action="{% url 'post retweet' %}"  method="POST" enctype="multipart/form-data" autocomplete="off" novalidate>
+                {% csrf_token %}
+                <div class="retweet-popup-heading">
+                    <h3>Retweet this to followers?</h3>
+                    <span>
+                        <a class="close-retweet-popup"><i class="fa fa-times" aria-hidden="true" style="outline:none;"></i></a>
+                    </span>
+                </div>
+                <div class="retweet-popup-input">
+                    <div class="form-group retweet-popup-input-inner">
+                        <input class="form-control retweetMsg" name="retweet_message" aria-label="retweet_message" type="text" placeholder="Add a comment.."/>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+                <input type="hidden" name="tweet_id"value="{{tweet.id}}">
+                <div class="retweet-popup-inner-body">
+                    <div class="retweet-popup-inner-body-inner">
+                        <div class="retweet-popup-comment-wrap">
+                             <div class="retweet-popup-comment-head">
+                                <img class="img-responsive" src="{{tweet.user.extendedauthuser.profile_pic.url}}" alt="{{tweet.user.username}}" />
+                             </div>
+                             <div class="retweet-popup-comment-right-wrap">
+                                 <div class="retweet-popup-comment-headline">
+                                    <a href="{% url 'profile' username=tweet.user.username %}">{{tweet.user.get_full_name|default:tweet.user.username}}</a><span>@{{tweet.user.username}} {{tweet.created_on|naturaltime}}</span>
+                                 </div>
+                                 <br>
+                                 <div class="retweet-popup-comment-body">
+                                    {{tweet.message}} {% if tweet.tweet_image %} | {{tweet.tweet_image|filename}}{% endif %}
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="retweet-popup-footer"> 
+                    <div class="retweet-popup-footer-right">
+                        <button class="new-btn" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" type="submit"><i class="fa fa-retweet mr-2" aria-hidden="true"></i>Retweet</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- Retweet PopUp ends-->

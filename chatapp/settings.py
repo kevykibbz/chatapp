@@ -111,18 +111,18 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': 
-#             {
+DATABASES = {
+    'default': 
+            {
 
-#                 'ENGINE': 'django.db.backends.postgresql',
-#                 'NAME':env('DATABASE_NAME'),
-#                 'USER':env('DATABASE_USER'),
-#                 'PASSWORD':env('DATABASE_PASSWORD'),
-#                 'HOST':env('DATABASE_HOST'),
-#                 'PORT':env('DATABASE_PORT'),
-#             }
-# }
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME':env('DATABASE_NAME'),
+                'USER':env('DATABASE_USER'),
+                'PASSWORD':env('DATABASE_PASSWORD'),
+                'HOST':env('DATABASE_HOST'),
+                'PORT':env('DATABASE_PORT'),
+            }
+}
 
 # DATABASES = {
 #    'default': 
@@ -183,7 +183,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 #login
 LOGIN_URL='/accounts/login/'
-LOGIN_REDIRECT_URL='/chatroom'
+LOGIN_REDIRECT_URL='/dashboard'
 LOGOUT_REDIRECT_URL='/accounts/login/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

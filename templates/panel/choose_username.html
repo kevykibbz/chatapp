@@ -1,0 +1,59 @@
+{% extends 'panel/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block body %}
+<div class="container-fluid">
+   <div class="main-box">
+      <div class="main-box-wrapper">
+         <div class="row">
+            <div class="left col-md-6 col-12">
+                 <div class="items-wrapper">
+                     <div class="item">
+                         <span class="ti-search"></span>
+                         <h3>Follow your interests.</h3>
+                     </div>
+                     <div class="item">
+                         <span class="ti-user"></span>
+                         <h3>Hear what your people are talking about.</h3>
+                     </div>
+                     <div class="item">
+                         <span class="ti-comments"></span>
+                         <h3>Join the conversation.</h3>
+                     </div>
+                 </div>
+             </div>
+             <div class="right col-md-6 col-12">
+               <div class="row">
+                  <div class="login col-md-8 mx-auto">
+                     <div class="text-center"><i class="ti-twitter" style="font-size:50px;"></i></div>
+                     <h1 class="mb-4 " style="text-align:center;">Choose username</h1>
+                     <hr>
+                     <form class="ActiveForm" method="POST" enctype="multipart/form-data" autocomplete="off" novalidate>
+                        <div class="row">
+                           <div class="col-12">
+                              {% csrf_token %}
+                              <div class="form-group form-row">
+                                 <label for="id_username"><strong>Username</strong></label>
+                                 {{form.username}}
+                                 <div class="feedback"></div>
+                              </div>
+                           </div>
+                           <div class="col-12 mt-2 text-center">
+                              <center>
+                                 <button style="height:50px;" class="new-btn btn-block">Submit</button>
+                              </center>
+                           </div>
+                        </div>
+                     </form>
+                  </div>
+                  <div class="col-12">
+                     <hr>
+                     <p class="text-center"> &copy;{% now 'Y' %} {{obj.site_name}}.Developed by <a target="_blank" href="designer_link">{{designer_name}}</a></p>
+                  </div>
+               </div>
+             </div>
+            </div>
+        </div>
+   </div>
+</div>
+{% endblock %}

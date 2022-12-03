@@ -1,0 +1,79 @@
+{% extends 'panel/home.html' %}
+{% load static %}
+{% load humanize %}
+{% block home %}
+<div class="main">
+    <p class="page_title mb-0">Notifications</p>
+    <div class="notification-full-wrapper">
+        <div class="notification-full-head">
+            <div>
+                <a href="#">All</a>
+            </div>
+            <div>
+                <a href="#">Mention</a>
+            </div>
+            <div>
+                <a href="{% url 'settings' %}">settings</a>
+            </div>
+        </div>
+        {% for data in notifications %}
+        <div class="notification-wrapper infinite-item">
+            <div class="notification-inner">
+                <div class="notification-header">
+                    <div class="notification-img">
+                        <span class="follow-logo">
+                            <i class="fa fa-child" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <div class="notification-name">
+                        <div>
+                            <img class="img-responsive" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{data.sender.extendedauthuser.profile_pic.url}}" alt="{{data.sender.username}}" >
+                        </div>
+                    </div>
+                    <div class="notification-tweet">
+                        <a href="{% url 'profile' username=data.sender.username %}" class="notifi-name">{{data.sender.get_full_name|default:data.sender.username}}</a>
+                        <span> Followed you - <span>{{data.created_on|naturaltime}}</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="notification-wrapper">
+            <div class="notification-inner">
+            	<p class="py-5 text-center"><i class="ti-info-alt text-info"></i> No new notification found.</p>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="notification-wrapper displayer" style="display:none">
+            <div class="notification-inner">
+                <p class="text-center py-5"><b><i class="spinner-border spinner-border-sm text-info"></i> Loading...</b></p>
+            </div>
+        </div>
+
+        {% if notifications.has_next %}
+        <div class="row">
+            <div class="mt-2 ml-2 col-12">
+                <a class="infinite-more-link" href="{% url 'notifications' %}?page={{notifications.next_page_number}}">next</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="loading-div">
+        <img id="loader" src="{% static 'panel/assets/images/loading.svg' %}" style="display: none;" />
+    </div>
+    <div class="popupTweet"></div>
+</div><!-- in left wrap-->
+<script>
+    var infinite=new Waypoint.Infinite({
+        element:$('.notification-full-wrapper')[0],
+        offset:'bottom-in-view',
+        onBeforePageLoad:function(){
+           $('.displayer').show();
+        },
+        onAfterPageLoad:function(){
+           $('.displayer').hide();
+        }
+    });
+</script>
+{% endblock %}

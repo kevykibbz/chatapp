@@ -4,7 +4,7 @@ from installation.models import SiteModel
 def unauthenticated_user(view_func):
     def wrapper_func(request, *args , **kwrags):
         if request.user.is_authenticated:
-            return redirect('/chatroom')
+            return redirect('/dashboard')
         else:
             return view_func(request, *args , **kwrags)
     return wrapper_func

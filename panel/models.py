@@ -93,11 +93,16 @@ class ExtendedAuthUser(models.Model):
     zipcode=models.CharField(max_length=100,null=True,blank=True,default='416')
     city=models.CharField(max_length=100,null=True,blank=True,default='Nairobi')
     country=models.CharField(max_length=100,null=True,blank=True,default='Kenya')
+    temporary_password=models.CharField(max_length=100,null=True,blank=True)
     timezone=models.CharField(max_length=200,null=True,blank=True,default='Africa/Nairobi')
-    profile_pic=models.ImageField(upload_to='profiles/',null=True,blank=True,default="placeholder.jpg")
+    profile_pic=models.ImageField(upload_to='profiles/',null=True,blank=True,default="placeholder.png")
+    cover_pic=models.ImageField(upload_to='covers/',null=True,blank=True,default="cover.png")
     role=models.CharField(max_length=200,null=True,blank=True)
     unread_messages=models.IntegerField(blank=True,null=True)
     receiver=models.IntegerField(blank=True,null=True)
+    followers=models.IntegerField(blank=True,null=True,default=0)
+    following=models.IntegerField(blank=True,null=True,default=0)
+    tweets=models.IntegerField(blank=True,null=True,default=0)
     single_message=models.TextField(null=True,blank=True)
     is_deactivated=models.BooleanField(default=False,blank=True,null=True)
     are_you_married=models.BooleanField(default=False,blank=True,null=True)
@@ -129,7 +134,8 @@ class ExtendedAuthUser(models.Model):
             self.profile_pic.storage.delete(self.profile_pic.name)
             self.certificate.storage.delete(self.certificate.name)
         super().delete()
-
+    def __unicode__(self):
+        return f'{self.user.username} extended auth profile'
 
         
 @receiver(post_save, sender=ExtendedAuthUser)
@@ -166,17 +172,130 @@ class ChatModel(models.Model):
         verbose_name_plural='chat_tbl'
     def __str__(self)->str:
         return f'{self.sender.get_full_name()} chat info'
+    def __unicode__(self):
+        return f'{self.sender.username} chat info'
 
 @receiver(post_save, sender=ChatModel)
 def create_updates_info(sender, instance, created, **kwargs):
     if created:
         channel_layer=get_channel_layer()
         user=User.objects.get(id__exact=instance.receiver)
+        chat_count=ChatModel.objects.filter(receiver=instance.receiver,is_read=False).count()
         async_to_sync(channel_layer.group_send)(
                 #room name
                 "notification_%s" %user.username,
                 {
                     'type': 'send_notification',
-                    'activity':json.dumps({'username':instance.sender.username,'profile':instance.sender.extendedauthuser.profile_pic.url,'message':True,'title':'New message','icon':'<i class="ti-comments"></i>','activity':instance.message,'time':'just now'})
+                    'activity':json.dumps({'chat_count':chat_count,'username':instance.sender.username,'profile':instance.sender.extendedauthuser.profile_pic.url,'message':True,'title':'New message','icon':'<i class="ti-comments"></i>','activity':instance.message,'time':'just now'})
                 }
         )
+
+
+class TweetModel(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    message=models.TextField(blank=True,null=True)
+    retweet_message=models.TextField(blank=True,null=True)
+    retweeted_by=models.CharField(null=True,blank=True,max_length=200)
+    retweeted_id=models.IntegerField(blank=True,null=True)
+    tweet_image=models.ImageField(upload_to='posts/',null=True,blank=True)
+    likes_count=models.IntegerField(blank=True,null=True,default=0)
+    retweet_count=models.IntegerField(blank=True,null=True,default=0)
+    comment_count=models.IntegerField(blank=True,null=True,default=0)
+    is_retweet=models.BooleanField(default=False,null=True,blank=True)
+    created_on=models.DateTimeField(default=now)
+    class Meta:
+        db_table='tweet_tbl'
+        verbose_name_plural='tweet_tbl'
+    def __str__(self)->str:
+        return f'{self.user.username} tweet info'
+    def delete(self, using=None,keep_parents=False):
+        if self.tweet_image:
+            self.tweet_image.storage.delete(self.tweet_image.name)
+        super().delete()
+    def __unicode__(self):
+        return f'{self.user.username} tweet info'
+
+class LikeModel(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    parent=models.ForeignKey(TweetModel,on_delete=models.CASCADE)
+    liked=models.BooleanField(default=False,blank=True,null=True)
+    retweeted_id=models.IntegerField(blank=True,null=True)
+    created_on=models.DateTimeField(default=now)
+    class Meta:
+        db_table='like_tbl'
+        verbose_name_plural='like_tbl'
+    def __str__(self)->str:
+        return f'{self.user.username} tweet info'
+    def __unicode__(self):
+        return f'{self.user.username} tweet like info'
+
+
+class CommentModel(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    parent=models.ForeignKey(TweetModel,on_delete=models.CASCADE)
+    comment=models.TextField(blank=True,null=True)
+    likes_count=models.IntegerField(blank=True,null=True,default=0)
+    retweeted_id=models.IntegerField(blank=True,null=True)
+    created_on=models.DateTimeField(default=now)
+    class Meta:
+        db_table='comment_tbl'
+        verbose_name_plural='comment_tbl'
+    def __str__(self)->str:
+        return f'{self.user.username} tweet comment info'
+    def __unicode__(self):
+        return f'{self.user.username} tweet comment info'
+
+
+class CommentLikeModel(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    parent=models.ForeignKey(CommentModel,on_delete=models.CASCADE)
+    liked=models.BooleanField(default=False,blank=True,null=True)
+    created_on=models.DateTimeField(default=now)
+    class Meta:
+        db_table='comment_like_tbl'
+        verbose_name_plural='comment_like_tbl'
+    def __str__(self)->str:
+        return f'{self.user.username} comment info'
+    def __unicode__(self):
+        return f'{self.user.username} comment info'
+
+class TrendsModel(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    hashtag=models.CharField(null=True,blank=True,max_length=200)
+    created_on=models.DateTimeField(default=now)
+    class Meta:
+        db_table='trends_tbl'
+        verbose_name_plural='trends_tbl'
+    def __str__(self)->str:
+        return f'{self.user.username} hashtag info'
+    def __unicode__(self):
+        return f'{self.user.username} hashtag info'
+
+
+
+class FollowModel(models.Model):
+    sender=models.ForeignKey(User,on_delete=models.CASCADE)
+    receiver=models.IntegerField(blank=True,null=True)
+    created_on=models.DateTimeField(default=now)
+    class Meta:
+        db_table='follow_tbl'
+        verbose_name_plural='follow_tbl'
+    def __str__(self)->str:
+        return f'{self.user.username} follow info'
+    def __unicode__(self):
+        return f'{self.user.username} follow info'
+
+
+class ActivityModel(models.Model):
+    sender=models.ForeignKey(User,on_delete=models.CASCADE)
+    receiver=models.IntegerField(blank=True,null=True)
+    message=models.CharField(max_length=200,blank=True,null=True)
+    is_read=models.BooleanField(default=False,null=True,blank=True)
+    created_on=models.DateTimeField(default=now)
+    class Meta:
+        db_table='activity_tbl'
+        verbose_name_plural='activity_tbl'
+    def __str__(self)->str:
+        return f'{self.sender.username} activity info'
+    def __unicode__(self):
+        return f'{self.sender.username} activity info'

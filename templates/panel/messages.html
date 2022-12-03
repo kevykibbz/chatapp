@@ -1,0 +1,22 @@
+{% extends 'panel/home.html' %}
+{% load static %}
+{% load humanize %}
+{% block home %}
+ <div class="main">
+    <p class="page_title mb-0"><i class="ti-pencil mr-4" style="color:#50b7f5;"></i>Messages</p>
+    <div class='profile-box'>
+        <div class="tab-content chat-box" id="pills-tabContent">
+            <div class="p-2 text-center tab-pane  fade show active mt-5" role="tabpanel">
+                <img data-src="{% static 'panel/assets/images/search.svg' %}" class="width360 mb-3" />
+                <h4><i class="ti-info-alt"></i> Select chat to start conversation</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<a href="javascript:void(0);" class="list_btn btn btn-info btn-round float-md-right float d-md-none d-block"><i class="ti-comments my-float"></i></a>
+<script>
+	$(document).on('click','.float',function(){
+		$('.mobile-sidebar').toggleClass('active');
+	});
+</script>
+{% endblock %}

@@ -4,14 +4,16 @@
 }
 ::-webkit-scrollbar-track
 {
-    -webkit-box-shadow: inset 0 0 6px #3d71a1;
-    box-shadow: inset 0 0 6px #3d71a1;
+    -webkit-box-shadow: inset 0 0 6px var(--twitter-color);
+    -moz-box-shadow: inset 0 0 6px var(--twitter-color);
+    box-shadow: inset 0 0 6px var(--twitter-color);
     border-radius:10px;  
 }
 ::-webkit-scrollbar-thumb
 {
-    -webkit-box-shadow: inset 0 0 6px #3d71a1;
-    box-shadow: inset 0 0 6px #3d71a1;
+    -webkit-box-shadow: inset 0 0 6px var(--twitter-color);
+    -moz-box-shadow: inset 0 0 6px var(--twitter-color);
+    box-shadow: inset 0 0 6px var(--twitter-color);
     border-radius:10px;
 }
 .btn-fab
@@ -330,24 +332,6 @@ padding-top: 100%;
   width: 60px !important;
   height: 21px !important;
 }
-.float
-{
-  position:fixed;
-  width:50px;
-  height:50px;
-  bottom:6px;
-  left:6px;
-  background-color:#25d366;
-  color:#FFF;
-  border-radius:50px;
-  text-align:center;
-  font-size:30px;
-  box-shadow: 2px 2px 3px #999;
-  z-index:100;
-}
-.my-float{
-    margin-top:10px;
-}
 .navbar .navbar-toggler {
     width:40px !important;
     margin-right: 10px !important;
@@ -647,3 +631,161 @@ ol.w3l-right li:before {
   opacity: 0.8; }
 
 /*-- //testimonials --*/
+
+.modal-confirm {        
+color:var(--twitter-color);
+width: 325px;
+font-size: 14px;
+}
+.modal-confirm .modal-content {
+padding: 20px;
+border-radius: 5px;
+border: none;
+}
+.modal-confirm .modal-header {
+border-bottom: none;   
+position: relative;
+}
+.modal-confirm h4 {
+text-align: center;
+font-size: 26px;
+margin: 30px 0 -15px;
+}
+.modal-confirm .form-control, .modal-confirm .btn {
+min-height: 40px;
+border-radius: 3px; 
+}
+.modal-confirm .close {
+position: absolute;
+top: -5px;
+right: -5px;
+}   
+.modal-confirm .modal-footer {
+border: none;
+text-align: center;
+border-radius: 5px;
+font-size: 13px;
+}   
+.modal-confirm .icon-box {
+color: #fff;        
+position: absolute;
+margin: 0 auto;
+left: 0;
+right: 0;
+top: -70px;
+width: 95px;
+height: 95px;
+border-radius: 50%;
+z-index: 9;
+background:var(--twitter-color);
+padding: 15px;
+text-align: center;
+box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+}
+.modal-confirm .icon-box i {
+font-size: 58px;
+position: relative;
+top: 3px;
+}
+.modal-confirm.modal-dialog {
+margin: 80px auto;
+}
+.modal-confirm .btn {
+color: #fff;
+border-radius: 4px;
+background:var(--twitter-color);
+text-decoration: none;
+transition: all 0.4s;
+line-height: normal;
+border: none;
+}
+.modal-confirm .btn:hover, .modal-confirm .btn:focus {
+background:var(--twitter-color);
+outline: none;
+}
+.chat_window {
+    margin-left: 0 !important;
+}
+.chat_window .chat-history .my-message {
+    background-color: rgba(0,169,189,0.1) !important;
+    color: #00A9BD !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+    -ms-border-radius: 10px !important;
+    border-radius: 10px !important;
+    font-size: 15px;
+    padding: 7px 20px;
+    line-height: 26px;
+    margin-bottom: 13px !important;
+
+}
+.chat_window .chat-history .my-message:after {
+    border-bottom-color: rgba(0,169,189,0.1) !important;
+}
+.chat_window .chat-history .message {
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+    -ms-border-radius: 10px !important;
+    border-radius: 10px !important;
+    font-size: 15px;
+    padding: 7px 20px;
+    line-height: 26px;
+    margin-bottom: 13px !important;
+    width:fit-content;
+}
+.chat_window .chat-history .other-message:after {
+    border-bottom-color: #eceff1;
+    left:10% !important;
+}
+.status .name {
+    color: #444;
+    font-size: 12px !important;
+    font-weight: 700;
+}
+.float
+{
+  position:fixed;
+  width:50px;
+  height:50px;
+  bottom:6px;
+  right:6px;
+  background:var(--twitter-color) !important;
+  color:#FFF;
+  border-radius:50px;
+  text-align:center;
+  font-size:30px;
+  box-shadow: 2px 2px 3px #999;
+  z-index:100;
+  text-align:center;
+}
+.my-float{
+  position:relative;
+  top:9px;
+}
+.chat_list {
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
+  width: 100%;
+  max-height:600px;
+  overflow-y:scroll;
+}
+.f-btner {
+    padding: 5px 8px 5px 20px;
+    border: 2px solid var(--twitter-color);
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 25px;
+    cursor: pointer;
+    color: var(--twitter-color);
+    height: 40px;
+    width: 40px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float: right;
+    margin-top: 13px;
+}

@@ -1,0 +1,390 @@
+{% extends 'panel/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block body %}
+{% load count %}
+<style>
+    .name-section{
+        position:absolute;
+        left:80px;
+        top:25px;
+    }
+    .chat-button{
+        position:absolute;
+        right:10px;
+        top:25px;
+    }
+    .mobile-sidebar{
+      position:fixed;
+      left:-100%;
+      background:#fff;
+      padding:5px 32px;
+      width:76% !important;
+      transition:400ms;
+      z-index:1000;
+      box-shadow:0 -2px 16px rgba(47,54,64,0.39);
+    }
+    .mobile-sidebar.active{
+      left:0;  
+    }
+</style>
+<div class="grid-container">
+    <div class="sidebar">
+        <ul style="list-style:none;">
+            <li><i class="fa fa-twitter" style="color:#50b7f5;font-size:10px;"></i></li>
+            <li class="active_menu"><a href="{% url 'dashboard' %}"><i class="ti-home" style="color:#50b7f5;"></i><span style="color:#50b7f5;">Home</span></a></li>
+            <li><a href="{% url 'dashboard' %}"><i class="fa fa-hashtag"></i><span>Explore</span></a></li>
+            <li><a href="{% url 'notifications' %}"><i class="ti-bell" aria-hidden="true"></i><span>Notifications</span>
+                <span id="notificaiton" class="ml-0">{% if notifications_count > 0 %}<span class="span-i">{{notifications_count|intcomma}}</span>{% endif %}</span>
+            <li id='messagePopup'>
+                <a href="{% url 'account messages' %}">
+                    <i class="ti-comments" aria-hidden='true'></i><span>Messages</span>
+                    <span id='messages'>{% if chat_count > 0 %}<span class="span-i">{{chat_count|intcomma}}</span>{% endif %}</span>
+                </a>
+            </li>
+            <li><a href="{% url 'profile' username=data.username %}"><i class="ti-user"></i><span>Profile</span></a></li>
+            <li><a href="{% url 'settings' %}"><i class="ti-settings"></i><span>Settings</span></a></li>
+            <li><a href="{% url 'logout' %}"><i class="ti-power-off"></i><span>Logout</span></a></li>
+            <li style="padding:10px 40px;"><button class="sidebar_tweet button addTweetBtn" style="outline:none;">Tweet</button></li>
+        </ul>
+        <ul>
+            <div class="media" style="margin-top:150px;">
+                <li class="media-inner">
+                    <a href="{% url 'profile' username=data.username %}">
+                        <img class="img-responsive" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{data.extendedauthuser.profile_pic.url}}" style="height:26px; width:26px; border-radius:50%;" />
+                        <div class="media-body">
+                            <h5 class="mt-2">
+                                <a href="{% url 'profile' username=data.username %}"><span><b>{{data.get_full_name|default:data.username}}</b> <span class="text-muted" style="margin-left:0px">@{{data.username}}</span></span></a>
+                            </h5>
+                        </div>
+                    </a>
+                </li>
+            </div>
+        </ul>
+    </div>
+    <div class="sidebar mobile-sidebar d-md-none d-block">
+       <div class="row">
+            <div class="col-12">
+                <div class="mt-2">
+                    <div class="search-container search-container-mobile">
+                        <a href="" class="search-btn">
+                            <i class="fa fa-search"></i>
+                        </a>
+                        <input type="text" name="search" placeholder="search" class="search-input search-chat" autocomplete="on">
+                    </div>
+                </div>
+                <div class='search-result search-result-mobile'></div>
+           </div>
+           <div class="col-12">
+                <ul class='nav-tabs mb-2 setting-head' role="tablist">
+                    <li data-location="chatters" class='nav-item account-text active'>
+                        <a  class='nav-link bold' id="users1-tab" data-toggle="tab" href="#users-list1" role="tab" aria-controls="users-list1" aria-selected="true">Chats</a>
+                    </li>
+                    <li data-location="contacts" class='nav-item password-text'>
+                        <a  class='nav-link'  id="groups1-tab" data-toggle="tab" href="#groups1" role="tab" aria-controls="groups1" aria-selected="false">Contacts</a>
+                    </li>
+                </ul>
+           </div>
+           <div class="col-12">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="users1-list" role="tabpanel" aria-labelledby="users1-tab">
+                        <div class='acc'>
+                            <div class='acc-content'>
+                                <div class="chat_list">
+                                    <ul class="user_list list-unstyled mb-0 mt-3">
+                                        {% for user in chats %}
+                                        <li>
+                                            <a href="javascript:void(0);">
+                                                <img src="{% static 'panel/assets/images/defaultProfileImage.png' %}" alt="avatar" />
+                                                <div class="about">
+                                                    <div class="name">{{user.get_full_name|default:user.username}}
+                                                        {% if is_receiver and user.id|count %}
+                                                            <small class="span-i message_counter">{{user.id|count}}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="status">
+                                                        {% if user.extendedauthuser.is_online %} 
+                                                        <small class="text-success  float-left">Online</small>
+                                                        {% else %}
+                                                            <small class="text-danger  float-left"> 
+                                                                Last seen:{{user.extendedauthuser.updated_on|naturaltime|truncatechars:8}}
+                                                            </small>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="float-right chat-button">
+                                                        <button data-user="{{user.id}}" class='f-btner chatbtn'style='outline:none;'><i class='ti-comments'></i></button>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <hr>
+                                       {% empty %}
+                                        <div class="text-center">
+                                            <p class="py-5"><i class="ti-info-alt text-info"></i> No user(s) found.</p>
+                                        </div>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade " id="groups1" role="tabpanel" aria-labelledby="groups1-tab">
+                        <div class='acc'>
+                            <div class='acc-content'>
+                                <div class="chat_list">
+                                    <ul class="user_list list-unstyled mb-0 mt-3">
+                                        {% for user in contacts %}
+                                        <li>
+                                            <a href="javascript:void(0);">
+                                                <img src="{% static 'panel/assets/images/defaultProfileImage.png' %}" alt="avatar" />
+                                                <div class="about">
+                                                    <div class="name">{{user.get_full_name|default:user.username}}
+                                                        {% if is_receiver and user.id|count %}
+                                                            <small class="span-i message_counter">{{user.id|count}}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="status">
+                                                        {% if user.extendedauthuser.is_online %} 
+                                                            <small class="text-success float-left">Online</small>
+                                                        {% else %}
+                                                            <small class="text-danger  float-left"> 
+                                                                Last seen:{{user.extendedauthuser.updated_on|naturaltime|truncatechars:8}}
+                                                            </small>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="float-right chat-button">
+                                                        <button data-user="{{user.id}}" class='f-btner chatbtn'style='outline:none;'><i class='ti-comments'></i></button>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <hr>
+                                       {% empty %}
+                                        <div class="text-center">
+                                            <p class="py-5"><i class="ti-info-alt text-info"></i> No user(s) found.</p>
+                                        </div>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           </div>
+       </div>
+    </div>
+    {% block home %}
+    {% endblock %}
+    <div class="popupTweet"></div>
+    <div class="right_sidebar d-md-block d-none">
+        {% if messages %}
+        <div class="mt-2">
+            <div class="search-container search-container-desktop">
+                <a href="" class="search-btn">
+                    <i class="fa fa-search"></i>
+                </a>
+                <input type="text" name="search" placeholder="search" class="search-input search-chat" autocomplete="on">
+            </div>
+        </div>
+        <div class='search-result search-result-desktop'></div>
+        <ul class='nav-tabs mb-2 setting-head' role="tablist">
+            <li data-location="chatters" class='nav-item account-text active'>
+                <a  class='nav-link bold' id="users-tab" data-toggle="tab" href="#users-list" role="tab" aria-controls="users-list" aria-selected="true">Chats</a>
+            </li>
+            <li data-location="contacts" class='nav-item password-text'>
+                <a  class='nav-link'  id="groups-tab" data-toggle="tab" href="#groups" role="tab" aria-controls="groups" aria-selected="false">Contacts</a>
+            </li>
+        </ul>
+        <div class='righter mt-4'>
+            <div class='inner-righter'>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="users-list" role="tabpanel" aria-labelledby="users-tab">
+                        <div class='acc'>
+                            <div class='acc-content'>
+                                <ul class="right_chat user_list list-unstyled list">
+                                    {% for user in chats %}
+                                        <li class="text-center">
+                                            <div class="follow-body trend infinite-item position-relative">
+                                                <div class="follow-img media-inner">
+                                                    <img class="img-responsive" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{user.extendedauthuser.profile_pic.url}}" alt="{{user.username}}" />
+                                                </div>
+                                                <div class="fo-co-head media-body name-section">
+                                                    <a href="{% url 'profile'  username=data.username %}">{{user.get_full_name|default:user.username}}
+                                                    {% if is_receiver and user.id|count %}
+                                                    <small class="span-i message_counter">{{user.id|count}}</small>
+                                                    {% endif %}
+                                                    </a><br>
+                                                    <span>@{{user.username}} - 
+                                                        {% if user.extendedauthuser.is_online %} 
+                                                            <small class="text-success">Online</small>
+                                                        {% else %}
+                                                            <small class="text-danger"> Last seen:{{user.extendedauthuser.updated_on|naturaltime}}</small>
+                                                        {% endif %}
+                                                    </span>
+                                                </div>
+                                                <div class="chat-button">
+                                                    <a href="javascript:void(0);" data-user="{{user.id}}" class='f-btn chatbtn' style='outline:none;'><i class='ti-comments'></i> Chat</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        {% empty %}
+                                        <div class="text-center">
+                                            <p class="py-5"><i class="ti-info-alt text-info"></i> No user(s) found.</p>
+                                        </div>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="groups" role="tabpanel" aria-labelledby="groups-tab">
+                        <div class="acc">
+                            <div class="acc-heading text-center">
+                                <h5>Select chat to start new conversation</h5>
+                            </div>
+                            <ul class="right_chat user_list list-unstyled list">
+                                {% for user in contacts %}
+                                    <li class="acc-content text-center">
+                                        <div class="follow-body trend infinite-item position-relative">
+                                            <div class="follow-img media-inner">
+                                                <img class="img-responsive" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{user.extendedauthuser.profile_pic.url}}" alt="{{user.username}}" />
+                                            </div>
+                                            <div class="fo-co-head media-body name-section">
+                                                <a href="{% url 'profile'  username=data.username %}">{{user.get_full_name|default:user.username}}
+                                                    {% if is_receiver and user.id|count %}
+                                                    <small class="span-i message_counter">{{user.id|count}}</small>
+                                                    {% endif %}
+                                                </a> <br>
+                                                <span>@{{user.username}} - 
+                                                {% if user.extendedauthuser.is_online %} 
+                                                    <small class="text-success">Online</small>
+                                                {% else %}
+                                                    <small class="text-danger"> Last seen:{{user.extendedauthuser.updated_on|naturaltime}}</small>
+                                                {% endif %}
+                                                </span>
+                                            </div>
+                                            <div class="chat-button">
+                                                <a href="javascript:void(0);" data-user="{{user.id}}" class='f-btn chatbtn' style='outline:none;'><i class='ti-comments'></i> Chat</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% empty %}
+                                <div class="text-center">
+                                    <p class="py-5"><i class="ti-info-alt text-info"></i> No user(s) found.</p>
+                                </div>
+                                {% endfor %} 
+                            </ul>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="search-container">
+            <a href="" class="search-btn">
+                <i class="fa fa-search"></i>
+            </a>
+            <input type="text" name="search" placeholder="search" class="search-input search" autocomplete="off">
+        </div>
+        <div class='search-result'></div>
+        <div class="trends_container">
+            <div class="trends_box">
+                <div class="trends_header">
+                    <p>Trends for you</p>
+                </div><!-- trend title end-->
+                <div class="trends_body">
+                    <div class="trend">
+                        <span>Trending</span>
+                        <p>
+                            <a style="color: #000;">#100daysofcode</a>
+                        </p>
+                        <div class="trend-tweets">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                </div>
+                <div class="trends_body">
+                    <div class="trend">
+                        <span>Trending</span>
+                        <p>
+                            <a style="color: #000;">#GoogleIO</a>
+                        </p>
+                        <div class="trend-tweets">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                </div>
+                <div class="trends_show-more">
+                    <a href="">Show more</a>
+                </div>
+            </div>
+        </div>
+        {% if not following  %}
+        {% if not followers %}
+        <div class="trends_container">
+            <div class="trends_box">
+                <div class="trends_header">
+                    <p>Who to follow</p>
+                </div>
+                {% for user in users %}
+                <div class="follow-body trend">
+                    <div class="follow-img media-inner">
+                        <img class="img-responsive" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{user.extendedauthuser.profile_pic.url}}" alt="{{user.username}}" />
+                    </div>
+                    <div class="media-inner">
+                        <div class="fo-co-head media-body">
+                            <a href="{% url 'profile'  username=data.username %}">{{user.get_full_name|default:user.username}}</a><br><span>@{{user.username}}</span>
+                        </div>
+                        <!-- FOLLOW BUTTON -->
+                        <button class='f-btn follow-btn' data-follow='{{user.id}}' data-profile='{{data.id}}' style='outline:none;'><i class='fa fa-user-plus'></i>Follow</button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="follow-body trend">
+                    <p class="text-center"><i class="ti-info-alt text-info"></i> No user(s) found.</p>
+                </div>
+                {% endfor %}
+                {% if users_count > 10 %}
+                <div class="trends_show-more">
+                    <a href="{% url 'users' %}">Show more</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endif %}
+    </div>
+
+</div>
+<script>
+    $(function(){
+        $('.setting-head li').on('click',function(){
+            $('.setting-head li.active').not(this).removeClass('active');
+            $('.setting-head li a.active').not(this).removeClass('active');
+            $(this).toggleClass('active');
+            var location=$(this).data('location');
+            if(location == 'chatters'){
+                $('.chatters').show();
+                $('.contacts').hide();
+            }else{
+                $('.contacts').show();
+                $('.chatters').hide();
+            }
+        });
+    });
+</script>
+<script>
+        $(function()
+        {
+            $('.right_chat li').on('click',function()
+            {
+                $('.right_chat li.activated').not(this).removeClass('activated active');
+                $(this).toggleClass('activated');
+            });
+            $('.chat_window_list').animate({scrollTop:$(document).height()},'slow');
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'panel/home.html' %}
+{% load static %}
+{% load humanize %}
+{% block home %}
+<div class="main">
+    {% if followers %}
+    <p class="page_title mb-0"><i class="ti-layers-alt mr-4" style="color:#50b7f5;"></i><span class="follow-text">{{title}}</span></p>
+    {% elif following %}
+    <p class="page_title mb-0"><i class="ti-layers-alt mr-4" style="color:#50b7f5;"></i><span class="follow-text">{{title}}</span></p>
+    {% else  %}
+    <p class="page_title mb-0"><i class="ti-layers-alt mr-4" style="color:#50b7f5;"></i>Who to follow</p>
+    {% endif %}
+    <div class="profile-text">
+        {% for user in follows %}
+        <div class="follow-body trend infinite-item">
+            <div class="follow-img media-inner">
+                <img class="img-responsive" src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{user.extendedauthuser.profile_pic.url}}" alt="{{user.username}}" />
+            </div>
+            <div class="media-inner">
+               <div class="row">
+                   <div class="col-md-6">
+                        <div class="fo-co-head media-body">
+                            <a href="{% url 'profile'  username=data.username %}">{{user.get_full_name|default:user.username}}</a><br><span>@{{user.username}}</span>
+                        </div>
+                   </div>
+                   <div class="col-md-6 my-auto text-right">
+                        <!-- FOLLOW BUTTON -->
+                        <button class='f-btn follow-btn {% if following %}following-btn{% endif %}' data-follow='{{user.id}}' data-profile='{{data.id}}' style='outline:none;'><i class='fa fa-user-plus'></i>{% if following %}Following{% else %}Follow{% endif %}</button>
+                   </div>
+               </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="follow-body trend">
+            <p class="text-center"><i class="ti-info-alt text-info"></i> No user(s) found.</p>
+        </div>
+        {% endfor %} 
+        <div class="follow-body trend displayer" style="display:none">
+            <p class="text-center py-5"><b><i class="spinner-border spinner-border-sm text-info"></i> Loading...</b></p>
+        </div>
+        {% if follows.has_next %}
+        <div class="row">
+            <div class="mt-2 ml-2 col-12">
+                <a class="infinite-more-link" href="{% url 'users' %}?page={{follows.next_page_number}}">next</a>
+            </div>
+        </div>
+        {% endif %}  
+    </div>
+</div>
+<script>
+    var infinite=new Waypoint.Infinite({
+        element:$('.profile-text')[0],
+        offset:'bottom-in-view',
+        onBeforePageLoad:function(){
+           $('.displayer').show();
+        },
+        onAfterPageLoad:function(){
+           $('.displayer').hide();
+        }
+    });
+</script>
+{% endblock %}
