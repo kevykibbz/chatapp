@@ -625,7 +625,7 @@ $(function(){
 
 
 const roomName = JSON.parse(document.getElementById('room-name').textContent);
-const notificationSocket = new WebSocket('ws://'+ window.location.host + '/notification/'+ roomName);
+const notificationSocket = new WebSocket('wss://'+ window.location.host + '/notification/'+ roomName);
 notificationSocket.onopen = function(e)
 {
   UpdateStatus(is_online=true)
