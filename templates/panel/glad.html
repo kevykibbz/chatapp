@@ -24,17 +24,17 @@
              </div>
              <div class="right col-md-6 col-12">
                <div class="row">
-                  <div class="col-12 p-2">
-			        <div class='step-letsgo'>
-			            <h3>We're glad you're here, kevin </h3>
-			            <p class="text-capitalize">{{obj.site_name}} is a constantly updating stream of the coolest, most important news, media, sports, TV, conversations and more--all tailored just for you.
-			            <br>
-			                Tell us about all the stuff you love and we'll help you get set up.
-			            </p>
-			            <span>
-			                <a href="{% url 'dashboard' %}" class='backButton' style="color:var(--twitter-color);">Let's go!</a>
-			            </span>
-			        </div>
+                  <div class="col-12 ml-2 p-2">
+      			        <div class='step-letsgo'>
+      			            <h3>We're glad you're here, {{data.username}} </h3>
+      			            <p class="text-capitalize">{{obj.site_name}} is a constantly updating stream of the coolest, most important news, media, sports, TV, conversations and more--all tailored just for you.
+      			            <br>
+      			                Tell us about all the stuff you love and we'll help you get set up.
+      			            </p>
+      			            <span>
+      			                <a href="{% url 'dashboard' %}" class='backButton' style="color:var(--twitter-color);">Let's go!</a>
+      			            </span>
+      			        </div>
                   </div>
                   <div class="col-12">
                      <hr>

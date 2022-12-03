@@ -511,7 +511,9 @@ textarea {
 .main-box .left {
     background: url(../images/bird.svg) #1da1f2 no-repeat;
     background-size: cover;
+    background-position:center;
     display: flex;
+    width:100% !important;
 }
 
 .main-box .left .items-wrapper {
