@@ -1042,11 +1042,10 @@ def searchChat(request):
 @login_required(login_url='/accounts/login')
 def retrieveChats(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        id=request.GET.get('user_id',None)#
+        id=request.GET.get('user_id',None)
         user=get_object_or_404(User,id__exact=id)
         obj=check_data()
         messages=ChatModel.objects.filter(sender=request.user.pk,receiver=id) | ChatModel.objects.filter(receiver=request.user.pk,sender=id)
-        messages=ChatModel.objects.filter(receiver=request.user.pk,is_read=False)
         for message in messages:
             message.is_read=True
             message.save()
