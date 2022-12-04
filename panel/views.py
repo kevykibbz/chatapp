@@ -555,12 +555,11 @@ class EditrofileView(View):
         obj=check_data()
         if not obj:
             return redirect('/installation/')
-        user = get_object_or_404(User,username=username)
-        form=CurrentStaffLoggedInUserProfileChangeForm(instance=user)
-        eform=CurrentAdminExtUserProfileChangeForm(instance=user.extendedauthuser)
+        form=CurrentStaffLoggedInUserProfileChangeForm(instance=request.user)
+        eform=CurrentAdminExtUserProfileChangeForm(instance=request.user.extendedauthuser)
         passform=UserPasswordChangeForm()
         profileform=ProfilePicForm()
-        actionform=ActionForm(instance=user.extendedauthuser)
+        actionform=ActionForm(instance=request.user.extendedauthuser)
         data={
             'title':f'Edit profile / {user.username}',
             'obj':obj,

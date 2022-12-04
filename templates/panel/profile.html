@@ -28,7 +28,7 @@
                                     {% if current_user.id == data.id %}
                                     <button class="new-btn" onclick=location.href="{% url 'edit profile' username=data.username %}" style="outline:none;">Edit Profile</button> 
                                     {% else %}
-                                    <button class="new-btn" style="outline:none;" disabled>Edit Profile</button> 
+                                    <button class="new-btn" style="outline:none;cursor:not-allowed;" disabled>Edit Profile</button> 
                                     {% endif %}      
                                 </div>
                             </div>
