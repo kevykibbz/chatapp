@@ -6,7 +6,7 @@
    <div class="main-box">
       <div class="main-box-wrapper">
          <div class="row">
-            <div class="left col-md-6 col-12">
+            <div class="left col-md-6 col-12"  style="overflow-x:hidden;">
                  <div class="items-wrapper">
                      <div class="item">
                          <span class="ti-search"></span>
@@ -14,7 +14,7 @@
                      </div>
                      <div class="item">
                          <span class="ti-user"></span>
-                         <h3>Hear what your people are talking about.</h3>
+                         <h3>Hear what your people <br> are talking about.</h3>
                      </div>
                      <div class="item">
                          <span class="ti-comments"></span>
@@ -22,11 +22,14 @@
                      </div>
                  </div>
              </div>
-             <div class="right col-md-6 col-12">
+             <div class="right col-md-6 col-12 mt-4">
                <div class="row">
                   <div class="login col-md-8 mx-auto">
                      <div class="text-center"><i class="ti-twitter" style="font-size:50px;"></i></div>
-                     <h1 class="mb-4 " style="text-align:center;">Choose username</h1>
+                     <h1 style="text-align:center;">Choose username</h1>
+                     <div class="text-center">
+                        <span class="text-capitalize"><b>{{obj.site_name}}</b></span>
+                     </div>
                      <hr>
                      <form class="ActiveForm" method="POST" enctype="multipart/form-data" autocomplete="off" novalidate>
                         <div class="row">

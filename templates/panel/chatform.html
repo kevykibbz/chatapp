@@ -1,0 +1,94 @@
+{% load static %}
+{% load humanize %}
+<div class="tweet-show-popup-wrap">
+	<input type="checkbox" id="tweet-show-popup-wrap">
+	<div class="wrap4">
+		<div class="tweet-show-popup-box">
+			<div class="tweet-show-popup-inner">
+				<div class="tweet-show-popup-head">
+					<div class="tweet-show-popup-head-left">
+						<div class="tweet-show-popup-img">
+							<img class="img-responsive" src="{{data.extendedauthuser.profile_pic.url}}" alt="{{data.username}}"/>
+						</div>
+						<div class="tweet-show-popup-name">
+							<div class="t-s-p-n">
+								<a href="{% url 'profile' username=data.username %}">{{data.get_full_name|default:data.username}}</a>
+							</div>
+							<div class="t-s-p-n-b">
+								<a href="#">@{{data.username}} - 
+									{% if user.extendedauthuser.is_online %} 
+                                        <small class="text-success">Online</small>
+                                    {% else %}
+                                        <small class="text-danger"> Last seen:{{user.extendedauthuser.updated_on|naturaltime}}</small>
+                                    {% endif %}
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="tweet-show-popup-head-right">
+						<a class="close-chatform-popup" style="cursor:pointer;"><i class="fa fa-times" aria-hidden="true" style="outline:none;"></i></a>
+					</div>
+				</div>
+				<hr>
+				<div class="tweet-show-popup-tweet-wrap chat_window body">
+					<ul class="chat-history chat_window_list" style="max-height:260px;overflow-y:scroll;">
+						{% for message in messages %}
+                            {% if message.sender.id == data.id  %}
+                                <li class="clearfix">
+                                    <div class="status {% if message.sender.extendedauthuser.is_online %}online{% else %}''{% endif %} message-data text-right">
+                                        <span class="time">{{message.created_on|naturaltime}}</span>
+                                        <span class="name"  style="color:#50b7f5;">{{message.sender.get_full_name|default:message.sender.username}}</span>
+                                        {% if message.sender.extendedauthuser.is_online %}
+                                            <i class="zmdi zmdi-circle me"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="message  my-message float-right"><p>{{message.message}}</p></div>
+                                </li>
+                            {% else %}
+
+                            <li>
+                                <div class="status message-data text-left {% if message.sender.extendedauthuser.is_online %}online{% else %}''{% endif %}">
+                                    {% if message.sender.extendedauthuser.is_online %}
+                                        <i class="zmdi zmdi-circle me"></i>
+                                    {% endif %}
+                                    <span class="name">{{message.sender.get_full_name|default:message.sender.username}}</span>
+                                    <span class="time">{{message.created_on|naturaltime}}</span>
+                                </div>
+                                <div class="message other-message text-left">
+                                    <p>{{message.message}}</p>
+                                </div>
+                            </li>
+                            {% endif %}
+                        {% empty %}
+                            <div class="text-center py-5">
+                                  <img src="{% static 'panel/assets/images/search.svg' %}" class="width360 mb-3" />
+                                  <h4><i class="ti-info-alt"></i> No messages found.</h4>
+                            </div>
+                        {% endfor %}
+					</ul>
+					<div class="chat-box">
+                        <div class='tweet_box tweet_add'>
+                            <div class='left-tweet ml-3'>
+                                <img class="img-responsive mr-3" style="width: 53px;height:53px;border-radius:50%;" src="{{data.extendedauthuser.profile_pic.url}}" alt="{{data.username}}"/>
+                            </div>
+                            <div class='tweet_body'>
+                                <form class="ActiveForm" method="POST" action="{% url 'chat' id=user.id %}"  enctype="multipart/form-data" autocomplete="off" novalidate>
+                                    <div class="form-group">
+                                        {{form.message}}
+                                        <div class="feedback"></div>
+                                    </div>
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="mb-2 col-12 text-right">
+                                            <button class="button_tweet" type="submit" style="outline:none;">Send</button>
+                                        </div>
+                                    </div>
+                                </form>  
+                            </div>
+                        </div>                                                            
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

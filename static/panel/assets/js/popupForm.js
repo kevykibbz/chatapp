@@ -16,6 +16,15 @@ $(function(){
 		}).done(function(){el.html(btn_text).attr('disabled',false)});
 	});
 
+
+	$(document).on('click', '.requestChatBtn', function(){
+		var el=$(this),user_id=el.data('user'),btn_text=el.html();
+		$(this).html('Please wait...')
+		$.get('/request/chat/form', {user_id:user_id},function(data){
+			$('.popupTweet').html(data);
+		}).done(function(){el.html(btn_text).attr('disabled',false)});
+	});
+
  	$(document).on('submit','#popupForm', function(e){
 		e.preventDefault();
 		var formData = new FormData($(this)[0]);

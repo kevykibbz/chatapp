@@ -48,7 +48,9 @@
                         <div class="t-show-head">
                             <div class="t-show-popup" data-tweet="10">
                               <div class="t-show-img">
-                                    <img src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{tweet.user.extendedauthuser.profile_pic.url}}"/>
+                                    <a href="{% url 'profile' username=tweet.user.username %}">
+                                        <img src="{% static 'panel/assets/images/loader.gif' %}" data-src="{{tweet.user.extendedauthuser.profile_pic.url}}"/>
+                                    </a>
                                 </div>
                                  <div class="t-s-head-content ">
                                     <div class="t-h-c-name media-body">
@@ -82,7 +84,7 @@
                             <div class="t-s-f-right">
                                 <ul>
                                     <li>
-                                        <button style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
+                                        <button class="commentBtn" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
                                             <span class="retweetsCount">{{tweet.comment_count|intcomma|default:0}}</span>
                                         </button>
                                     </li>
@@ -148,7 +150,7 @@
                             <div class="t-s-f-right">
                                 <ul>
                                     <li>
-                                        <button style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
+                                        <button class="commentBtn" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
                                             <span class="retweetsCount">{{tweet.comment_count|intcomma|default:0}}</span>
                                         </button>
                                     </li>

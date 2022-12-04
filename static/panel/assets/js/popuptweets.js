@@ -24,4 +24,18 @@ $(function(){
 
 		});
 	});
+
+
+	$(document).on('click', '.commentBtn', function(){
+		var tweet_id = $(this).data('tweet'),
+		user_id  = $(this).data('user'),
+		el=$(this),btn_text=$(this).html();
+		$.get('/request/comment/form', {showpopup:tweet_id,user_id:user_id}, function(data){
+			$('.popupTweet').html(data);
+			$('.tweet-show-popup-box-cut').click(function(){
+				$('.tweet-show-popup-wrap').hide();
+			});
+		});
+	});
+
 });

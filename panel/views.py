@@ -51,12 +51,16 @@ def check_data():
 #chooseUsername
 class chooseUsername(View):
     def get(self,request,email):
+        obj=check_data()
+        if not obj:
+            return redirect('/installation/')
         user=get_object_or_404(User,email__exact=email)
         form=ChooseForm(instance=user)
         data={
             'title':'Choose Username',
             'form':form,
-            'data':request.user
+            'data':request.user,
+            'obj':obj,
         }
         return render(request,'panel/choose_username.html',context=data)
     def post(self,request,email,*args , **kwargs):
@@ -118,6 +122,7 @@ class Home(View):
                     if re.fullmatch(regex,key):
                         #email address
                         if User.objects.filter(email=key).exists():
+                            data=User.objects.get(email=key)
                             user=authenticate(username=data.username,password=password)
                         else:
                             uform_errors={"username": ["Invalid email address."]}
@@ -310,6 +315,25 @@ class commentForm(View):
             return JsonResponse({'valid':False,'uform_errors':form.errors},content_type='application/json')
 
 
+#retrieveChatForm
+@login_required(login_url='/accounts/login/')
+def retrieveChatForm(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        obj=check_data()
+        form=ChatForm()
+        user_id=request.GET.get('user_id')
+        print('user_id:',user_id)
+        messages=ChatModel.objects.filter(sender=request.user.pk,receiver=user_id) | ChatModel.objects.filter(receiver=request.user.pk,sender=user_id)
+        data={
+                'title':'ChatForm',
+                'obj':obj,
+                'data':request.user,
+                'messages':messages,
+                'form':form,
+            }
+        return render(request,'panel/chatform.html',context=data)
+    return HttpResponse('Method not allowed')
+
 
 
 #postRetweet
@@ -496,16 +520,28 @@ def profileView(request,username):
     passform=UserPasswordChangeForm()
     profileform=ProfilePicForm()
     actionform=ActionForm(instance=user.extendedauthuser)
+    results=TweetModel.objects.filter(user_id=user.id).order_by("-id")
+    paginator=Paginator(results,10)
+    page_num=request.GET.get('page',1)
+    try:
+        tweets=paginator.page(page_num)
+    except PageNotAnInteger:
+        tweets=paginator.page(1)
+    except EmptyPage:
+        tweets=paginator.page(paginator.num_pages)
+
     data={
-        'title':f'Edit profile / {user.username}',
+        'title':f'Profile / {user.username}',
         'obj':obj,
-        'data':request.user,
+        'data':user,
         'form':form,
         'eform':eform,
         'passform':passform,
         'profileform':profileform,
         'actionform':actionform,
         'room_name':request.user.username,
+        'tweets':tweets,
+        'tweets_count':paginator.count,
     }
     return render(request,'panel/profile.html',context=data)
  
@@ -1026,4 +1062,18 @@ def retrieveChats(request):
         return render(request,'panel/new_chat.html',context=data)
 
 
-        
+#searchForm
+@login_required(login_url='/accounts/login')
+def searchForm(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        obj=check_data()
+        search=request.GET.get('search',None)
+        results=searchUser(request.GET.get('search',None))
+        data={
+                'title':'Search Form',
+                'obj':obj,
+                'data':request.user,
+                'search':search,
+                'results':results,
+            }
+        return render(request,'panel/search_form.html',context=data)

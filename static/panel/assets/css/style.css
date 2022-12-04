@@ -313,7 +313,7 @@ textarea {
     position: sticky;
     top: 0;
     height: 100vh;
-    /*    background: red;*/
+    transition:400ms;
 }
 
 .sidebar ul li {

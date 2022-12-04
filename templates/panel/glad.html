@@ -6,7 +6,7 @@
    <div class="main-box">
       <div class="main-box-wrapper">
          <div class="row">
-            <div class="left col-md-6 col-12">
+            <div class="left col-md-6 col-12" style="overflow-x:hidden;">
                  <div class="items-wrapper">
                      <div class="item">
                          <span class="ti-search"></span>
@@ -14,7 +14,7 @@
                      </div>
                      <div class="item">
                          <span class="ti-user"></span>
-                         <h3>Hear what your people are talking about.</h3>
+                         <h3>Hear what your people <br> are talking about.</h3>
                      </div>
                      <div class="item">
                          <span class="ti-comments"></span>
@@ -26,13 +26,13 @@
                <div class="row">
                   <div class="col-12 ml-2 p-2">
       			        <div class='step-letsgo'>
-      			            <h3>We're glad you're here, {{data.username}} </h3>
+      			            <h3  class="text-md-left text-center">We're glad you're here, {{data.username}} </h3>
       			            <p class="text-capitalize">{{obj.site_name}} is a constantly updating stream of the coolest, most important news, media, sports, TV, conversations and more--all tailored just for you.
       			            <br>
       			                Tell us about all the stuff you love and we'll help you get set up.
       			            </p>
-      			            <span>
-      			                <a href="{% url 'dashboard' %}" class='backButton' style="color:var(--twitter-color);">Let's go!</a>
+      			            <span class="text-md-left text-center">
+      			                <a href="{% url 'dashboard' %}" class='backButton text-md-left text-center' style="color:var(--twitter-color);">Let's go!</a>
       			            </span>
       			        </div>
                   </div>

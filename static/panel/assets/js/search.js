@@ -1,11 +1,24 @@
-$(function(){
+$(function()
+{
 	$('.search').keyup(function(){
 		var search = $(this).val();
 		if(search.length > 0){
-				$.get('user/search', {search:search}, function(data){
+			$.get('request/search/form', {search:search}, function(data){
+				$('.popupTweet').html(data);
+			});
+		}else{
+			$('.search-result').html("");
+		}
+	});
+
+
+	$(document).on('keyup','.popup-search',function(){
+		var search = $(this).val();
+		if(search.length > 0){
+			$.get('user/search', {search:search}, function(data){
 				var output=``;
 				if(data.search){
-					output+=`<div class="nav-right-down-wrap"><ul>`;
+					output+=`<ul>`;
 					$.each(data.results,function(key,value){
 						output+=`<li>
 							  		<div class="nav-right-down-inner trend">
@@ -21,23 +34,15 @@ $(function(){
 									</div> 
 								 </li>`;
 					});
-					output+=`</ul></div>`;
-					$('.search-result').html(output);	
+					output+=`</ul>`;
+					$('.search-result-popup').html(output);	
 				}else{
-					$('.search-result').html("");
+					$('.search-result-popup').html("");
 				}
 			});
 		}else{
-			$('.search-result').html("");
+			$('.search-result-popup').html("");
 		}
-	});
-
-	$(document).on('keyup', '.search-user', function(){
-		$('.message-recent').hide();
-		var search = $(this).val();
-		$.post('http://localhost/twitter/core/ajax/searchUserInMsg.php', {search:search}, function(data){
-			$('.message-body').html(data);
-		});
 	});
 
 	$(document).on('keyup', '.search-chat', function(){
@@ -90,14 +95,16 @@ $(function(){
 			$('.search-result').html("");
 		}
 	});
-});
 
-$(document).on('click','.search-result li',function(){
-	$('.search-result').html("");
-	$('.search-result li').hide();
-})
 
-$(window).on('resize',function(){
-	$('.search-result').html("");
-	$('.search-result li').hide();
+	$(document).on('click','.search-result li',function(){
+		$('.search-result').html("");
+		$('.search-result li').hide();
+	});
+
+	$(window).on('resize',function(){
+		$('.search-result').html("");
+		$('.search-result li').hide();
+	});
+
 });

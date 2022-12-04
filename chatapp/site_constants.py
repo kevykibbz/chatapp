@@ -54,7 +54,7 @@ def export_vars(request):
             'whatsapp_link':env('WHATSAPP_LINK'),
             'linkedin_link':env('LINKEDIN_LINK'),
             'tweets':tweets,
-            'users':users,
+            'user_followers':users,
             'room_name':request.user.username,
             'users_count':paginator1.count,
             'notifications':notifications,

@@ -58,5 +58,8 @@ urlpatterns=[
     path('search/chat',views.searchChat,name='search chat'),
     #retrieve/chats
     path('retrieve/chats',views.retrieveChats,name='retrieve chats'),
+    #request/chat/form
+    path('request/chat/form',views.retrieveChatForm,name='retrieve chatform'),
+    path('request/search/form',views.searchForm,name='search form'),
 ]
 

@@ -524,7 +524,7 @@ function buildTweet(action,callback){
                                   <div class="t-s-f-right">
                                       <ul>
                                           <li>
-                                              <button style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
+                                              <button class="commentBtn" data-tweet="${callback.tweet_id}" data-user="${callback.response.user_id}" style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
                                                   <span class="retweetsCount">0</span>
                                               </button>
                                           </li>
@@ -582,7 +582,7 @@ function buildTweet(action,callback){
                                   <div class="t-s-f-right">
                                       <ul>
                                           <li>
-                                              <button style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
+                                              <button  class="commentBtn" data-tweet="${callback.tweet_id}" data-user="${callback.response.user_id}" style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
                                                   <span class="retweetsCount">0</span>
                                               </button>
                                           </li>

@@ -1,0 +1,51 @@
+{% load static %}
+{% load humanize %}
+<div class="tweet-show-popup-wrap">
+	<input type="checkbox" id="tweet-show-popup-wrap">
+	<div class="wrap4">
+		<div class="tweet-show-popup-box">
+			<div class="tweet-show-popup-inner">
+				<div class="tweet-show-popup-head">
+					<div class="tweet-show-popup-head-left">
+						<div class="search-container search-container-desktop" style="width:138% !important">
+				            <a href="" class="search-btn">
+				                <i class="fa fa-search"></i>
+				            </a>
+				            <input type="text" name="search" value="{{search}}" class="search-input  popup-search" placeholder="search"  autocomplete="on">
+				        </div>
+					</div>
+					<div class="tweet-show-popup-head-right">
+						<a class="close-chatform-popup" style="cursor:pointer;"><i class="fa fa-times" aria-hidden="true" style="outline:none;"></i></a>
+					</div>
+				</div>
+				<h6><b>Showing search results:</b></h6>
+				<hr>
+				<div class="tweet-show-popup-tweet-wrap" style="max-height:260px;overflow-y:scroll;">
+					<div class='search-result search-result-desktop search-result-popup'>
+						<ul>
+							{% for result in results %}
+								<li>
+							  		<div class="nav-right-down-inner trend">
+										<div class="nav-right-down-left">
+											<a href="{% url 'profile' username=result.username %}"><img class="img-responsive" src="{{result.extendedauthuser.profile_pic.url}}" alt="{{result.username}}"></a>
+										</div>
+										<div class="nav-right-down-right">
+											<div class="nav-right-down-right-headline">
+												<a href="{% url 'profile' username=result.username %}"><b>{{result.get_full_name|default:result.username}}</b></a><br><span class="text-muted">@{{result.username}}</span>
+											</div>
+											<div class="nav-right-down-right-body"></div>
+										</div>
+									</div> 
+								 </li>
+						{% empty %}
+						<li>
+							<p class="text-center"><i class="ti-info-alt text-info"></i> No results found.</p>
+						</li>
+						{% endfor %}
+						</ul>	
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
