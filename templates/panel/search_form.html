@@ -33,7 +33,9 @@
 											<div class="nav-right-down-right-headline">
 												<a href="{% url 'profile' username=result.username %}"><b>{{result.get_full_name|default:result.username}}</b></a><br><span class="text-muted">@{{result.username}}</span>
 											</div>
-											<div class="nav-right-down-right-body"></div>
+											<div class="nav-right-down-right-body">
+												<button onclick=location.href="{% url 'profile' username=result.username %}" class="new-btn" style="outline:none;">View profile</button>
+											</div>
 										</div>
 									</div> 
 								 </li>

@@ -29,7 +29,9 @@ $(function()
 											<div class="nav-right-down-right-headline">
 												<a href="/${value.username}"><b>${value.name?value.name:value.username}</b></a><br><span class="text-muted">@${value.username}</span>
 											</div>
-											<div class="nav-right-down-right-body"></div>
+											<div class="nav-right-down-right-body">
+												<button onclick=location.href="/${value.username}" class="new-btn" style="outline:none;">View profile</button>
+											</div>
 										</div>
 									</div> 
 								 </li>`;
