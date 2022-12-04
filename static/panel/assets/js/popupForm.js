@@ -1,5 +1,5 @@
 $(function(){
-	$(document).on('click', '.addTweetBtn', function(){
+	$(document).on('click', '.addNewTweetBtn', function(){
 		$('.status').removeClass().addClass('status-removed');
 		$('.hash-box').removeClass().addClass('hash-removed');
 		$('#count').attr('id', 'count-removed');

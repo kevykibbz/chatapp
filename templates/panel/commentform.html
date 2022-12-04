@@ -3,11 +3,6 @@
 <div class="tweet-show-popup-wrap">
 	<input type="checkbox" id="tweet-show-popup-wrap">
 	<div class="wrap4">
-		<label for="tweet-show-popup-wrap">
-			<div class="tweet-show-popup-box-cut">
-				<i class="fa fa-times" aria-hidden="true"></i>
-			</div>
-		</label>
 		<div class="tweet-show-popup-box">
 			<div class="tweet-show-popup-inner">
 				<div class="tweet-show-popup-head">
@@ -24,11 +19,9 @@
 							</div>
 						</div>
 					</div>
-					{% if tweet.user_id == data.id %}
 					<div class="tweet-show-popup-head-right">
-						<button class="new-btn" onclick=location.href="{% url 'profile' username=data.username %}" style="outline:none;">Edit Profile</button> 			
+						<a class="close-chatform-popup" style="cursor:pointer;"><i class="fa fa-times" aria-hidden="true" style="outline:none;"></i></a>
 					</div>
-					{% endif %}
 				</div>
 				<div class="tweet-show-popup-tweet-wrap">
 					<div class="tweet-show-popup-tweet">{{tweet.message}}</div>

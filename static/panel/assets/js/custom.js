@@ -117,6 +117,7 @@ $(document).on('submit','.ActiveForm',function()
               $('<div class="error-banner"><div class="error-banner-inner"><p id="errorMsg">'+callback.message+'</p></div></div>').insertBefore('.header-wrapper');
               $('.error-banner').hide().slideDown(300).delay(5000).slideUp(300);
               $('.popup-tweet-wrap').hide();
+              $('.tweet-show-popup-wrap').hide();
               var elements=$('.tweets').children('.all-tweet').length;
               if(elements < 2){
                 buildTweet('html',callback)

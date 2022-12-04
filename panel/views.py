@@ -246,7 +246,17 @@ class tweetForm(View):
             obj=form.save(commit=False)
             obj.user=request.user
             obj.save()
-            return JsonResponse({'valid':True,'message':'Tweet posted successfully.','tweet':True},content_type='application/json')
+            if obj.tweet_image:
+                image=obj.tweet_image
+            else:
+                image=''
+            response={
+                'user_id':request.user.pk,
+                'username':request.user.username,
+                'name':request.user.get_full_name(),
+                'profile':request.user.extendedauthuser.profile_pic.url,
+            }
+            return JsonResponse({'tweet_id':obj.id,'image':image,'valid':True,'message':'Tweet posted successfully.','tweet':True,'response':response,'tweeted_message':obj.message},content_type='application/json')
         else:
             return JsonResponse({'valid':False,'uform_errors':form.errors},content_type='application/json')
 

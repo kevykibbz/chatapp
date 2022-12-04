@@ -12,10 +12,9 @@
                 </div>
                 <div class='tweet_body'>
                     <form class="ActiveForm" method="POST"  enctype="multipart/form-data" autocomplete="off" novalidate>
-                        {{form.message}}
-                        <div class='hash-box'>
-                            <ul>
-                            </ul>
+                        <div class="form-group">
+                            {{form.message}}
+                            <div class="feedback"></div>
                         </div>
                         <div class='tweet_icons-wrapper'>
                             <div class='t-fo-left tweet_icons-add'>
