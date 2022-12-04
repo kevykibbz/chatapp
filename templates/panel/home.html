@@ -28,7 +28,7 @@
       left:0;  
     }
 </style>
-<button class="btn btn-primary btn-icon mobile_menu d-md-none d-block" type="button"><i class="zmdi zmdi-sort-amount-desc"></i></button>
+<button class="btn btn-primary btn-icon mobile_menu d-md-none d-block" type="button" style="background:var(--twitter-color) !important;"><i class="zmdi zmdi-sort-amount-desc"></i></button>
 <div class="grid-container">
     <div class="sidebar d-none d-md-block">
         <ul style="list-style:none;">
@@ -45,6 +45,9 @@
             </li>
             <li><a href="{% url 'profile' username=data.username %}"><i class="ti-user"></i><span>Profile</span></a></li>
             <li><a href="{% url 'settings' %}"><i class="ti-settings"></i><span>Settings</span></a></li>
+            <li class="d-md-none d-block">
+                <a data-search="search item" class="prompt-search" href="javascript:void(0);"><i class="ti-search"></i><span>Search</span></a>
+            </li>
             <li><a href="{% url 'logout' %}"><i class="ti-power-off"></i><span>Logout</span></a></li>
             <li style="padding:10px 40px;"><button class="sidebar_tweet button addTweetBtn" style="outline:none;">Tweet</button></li>
         </ul>

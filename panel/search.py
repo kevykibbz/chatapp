@@ -18,5 +18,5 @@ def searchUser(param):
 			data=User.objects.filter(extendedauthuser__phone__icontains=param).order_by("-id")
 			return data
 		else:
-			return False
-	return False
+			return None
+	return None

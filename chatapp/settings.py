@@ -29,7 +29,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE=True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS=7
 ACCOUNT_EMAIL_REQUIRED=True
 ACCOUNT_LOGIN_ATTEMPT_LIMIT=4
-SITE_ID=8
+SITE_ID=3
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -243,7 +243,7 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": os.environ.get('REDIS_URL','redis://127.0.0.1:6379/1'),
-        #"LOCATION":"redis://127.0.0.1:6379/1",
+        "LOCATION":"redis://127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }

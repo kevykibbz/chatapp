@@ -2445,6 +2445,7 @@ button.btn.unfollow{
 	display: flex;
     justify-content: center;
     align-items: center;
+    padding:0 10px !important;
 }
 .tweet-show-popup-box-cut{
 	color: #fff;

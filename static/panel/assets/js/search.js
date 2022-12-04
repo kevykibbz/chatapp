@@ -3,7 +3,7 @@ $(function()
 	$('.search').keyup(function(){
 		var search = $(this).val();
 		if(search.length > 0){
-			$.get('request/search/form', {search:search}, function(data){
+			$.get('/request/search/form', {search:search}, function(data){
 				$('.popupTweet').html(data);
 			});
 		}else{
@@ -11,11 +11,18 @@ $(function()
 		}
 	});
 
+	$(document).on('click','.prompt-search',function(){
+		var search = $(this).data('search');
+		$.get('/request/search/form', {search:search}, function(data){
+			$('.popupTweet').html(data);
+		});
+	});
+
 
 	$(document).on('keyup','.popup-search',function(){
 		var search = $(this).val();
 		if(search.length > 0){
-			$.get('user/search', {search:search}, function(data){
+			$.get('/user/search', {search:search}, function(data){
 				var output=``;
 				if(data.search){
 					output+=`<ul>`;

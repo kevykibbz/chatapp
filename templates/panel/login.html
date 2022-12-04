@@ -40,7 +40,7 @@
                            </div>
                            <div class="col-md-6">
                               <div class="form-group form-row">
-                                 <label for="id_username"><strong>Password:</strong></label>
+                                 <label for="id_username"><strong>Password:</strong>  <a href="{% url 'password_reset' %}" class="float-right small"><i class="fa fa-question-circle"></i> I forgot password</a></label>
                                  {{loginform.password}}
                                  <div class="feedback"></div>
                               </div>
