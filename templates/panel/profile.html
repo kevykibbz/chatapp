@@ -24,9 +24,11 @@
                                         <button data-user="6" class="new-btn requestChatBtn" style="outline:none;">Chat</button>
                                     </span>
                                 </div>
+                                {% if current_user.id == data.id %}
                                 <div class="col-6">
-                                    <button class="new-btn" style="outline:none;">Edit Profile</button>       
+                                    <button class="new-btn" onclick=location.href="{% url 'edit profile' username=data.username %}" style="outline:none;">Edit Profile</button>       
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

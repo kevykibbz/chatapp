@@ -534,6 +534,7 @@ def profileView(request,username):
         'title':f'Profile / {user.username}',
         'obj':obj,
         'data':user,
+        'current_user':request.user,
         'form':form,
         'eform':eform,
         'passform':passform,
