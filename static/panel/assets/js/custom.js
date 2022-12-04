@@ -633,7 +633,6 @@ notificationSocket.onopen = function(e)
 notificationSocket.onmessage = function(e)
 {
     const data = JSON.parse(e.data);
-    console.log(data)
     if(data.message)
     {
       var audio = new Audio('/static/panel/assets/audio/notification_sound.mp3');
