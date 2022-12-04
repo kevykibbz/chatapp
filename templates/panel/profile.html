@@ -25,7 +25,7 @@
                                     </span>
                                 </div>
                                 <div class="col-6">
-                                    {% if current_user.id == data.id %}
+                                    {% if view_user.id == data.id %}
                                     <button class="new-btn" onclick=location.href="{% url 'edit profile' username=data.username %}" style="outline:none;">Edit Profile</button> 
                                     {% else %}
                                     <button class="new-btn" style="outline:none;cursor:not-allowed;" disabled>Edit Profile</button> 

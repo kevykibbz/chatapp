@@ -533,8 +533,8 @@ def profileView(request,username):
     data={
         'title':f'Profile / {user.username}',
         'obj':obj,
-        'data':user,
-        'current_user':request.user,
+        'data':request.user,
+        'view_user':user,
         'form':form,
         'eform':eform,
         'passform':passform,
@@ -561,7 +561,7 @@ class EditrofileView(View):
         profileform=ProfilePicForm()
         actionform=ActionForm(instance=request.user.extendedauthuser)
         data={
-            'title':f'Edit profile / {user.username}',
+            'title':f'Edit profile / {request.user.username}',
             'obj':obj,
             'data':request.user,
             'form':form,
