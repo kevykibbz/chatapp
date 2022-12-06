@@ -210,7 +210,7 @@ class dashboard(View):
             user.tweets=int(user.tweets)+1
             user.save()
             if obj.tweet_image:
-                image=obj.tweet_image
+                image=obj.tweet_image.url
             else:
                 image=''
             response={
@@ -247,7 +247,7 @@ class tweetForm(View):
             obj.user=request.user
             obj.save()
             if obj.tweet_image:
-                image=obj.tweet_image
+                image=obj.tweet_image.url
             else:
                 image=''
             response={
@@ -1022,6 +1022,10 @@ def deleteComment(request,id):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         comment=get_object_or_404(CommentModel,id__exact=id)
         comment.delete()
+        tweet=TweetModel.objects.get(id__exact=comment.parent_id)
+        comment_count=CommentModel.objects.filter(parent_id=comment.parent_id).count()
+        tweet.comment_count=comment_count
+        tweet.save()
         count=CommentModel.objects.filter(parent_id__exact=comment.parent_id).count()
         return JsonResponse({'deleted':True,'message':'Comment deleted!','comment_count':count},content_type='application/json')
 

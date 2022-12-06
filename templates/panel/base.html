@@ -93,6 +93,8 @@
     </div> 
     <!-- //small model -->
     {{data.username|json_script:"room-name" }}
+    {{data.get_full_name|json_script:"name" }}
+    {{data.extendedauthuser.profile_pic.url|json_script:"profile" }}
     {{data.id|json_script:"user_id" }}
     <script type='text/javascript' src="{% static 'panel/assets/js/like.js' %}"></script>
     <script type='text/javascript' src="{% static 'panel/assets/js/comment_like.js' %}"></script>
@@ -115,7 +117,7 @@
             var preloader = document.getElementsByClassName('preloader')[0];
             setTimeout(function() {
                 preloader.style.display = 'none';
-            }, 3000);
+            },2000);
         };
     </script>
 </body>

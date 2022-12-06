@@ -2642,7 +2642,8 @@ button.btn.unfollow{
 .tweet-show-popup-footer-menu ul li:hover{
 
 }
-.tweet-show-popup-footer-menu ul li ul{
+.tweet-show-popup-footer-menu ul li ul,
+{
 	display: none;
 	position: absolute;
 	background-color: #fff;

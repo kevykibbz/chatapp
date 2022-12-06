@@ -28,7 +28,8 @@
       left:0;  
     }
 </style>
-<button class="btn btn-primary btn-icon mobile_menu d-md-none d-block" type="button" style="background:var(--twitter-color) !important;"><i class="zmdi zmdi-sort-amount-desc"></i></button>
+<button class="btn btn-primary btn-icon mobile_menu d-md-none d-block" type="button" style="background:var(--twitter-color) !important;"><i class="zmdi zmdi-sort-amount-desc"></i>
+</button>
 <div class="grid-container">
     <div class="sidebar d-none d-md-block">
         <ul style="list-style:none;">
@@ -369,7 +370,13 @@
         {% endif %}
         {% endif %}
     </div>
-
+</div>
+<div class="container fixed-bottom">
+    <section class="row">
+        <div class="mt-2 ml-2 col-12 text-center">
+            <p class="text-center"> &copy;{% now 'Y' %} {{obj.site_name}}.Developed by <a target="_blank" href="designer_link">{{designer_name}}</a></p>
+        </div>
+    </section>
 </div>
 <script>
     $(function(){

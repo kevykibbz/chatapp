@@ -794,3 +794,7 @@ outline: none;
     background: #007bff !important;
     border: 1px solid #007bff;
 }
+.more ul
+{
+  margin-top:-20px !important;
+}

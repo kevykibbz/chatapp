@@ -1,3 +1,7 @@
+const username = JSON.parse(document.getElementById('room-name').textContent);
+const name = JSON.parse(document.getElementById('name').textContent);
+const profile = JSON.parse(document.getElementById('profile').textContent);
+
 /*proloader*/
 function load()
 {
@@ -34,6 +38,7 @@ $(document).on('submit','.ActiveForm',function()
     var el=$(this),
     urlparams=new URLSearchParams(window.location.search),
     next=urlparams.get('next'),
+    elements=$('.tweets').children('div').length,
     btn_txt=el.parent().find('button:last').html(),
     form_data=new FormData(this);
     $('.feedback').html('');
@@ -107,19 +112,48 @@ $(document).on('submit','.ActiveForm',function()
         } 
 
         if(callback.valid){   
-            $('.small-model').modal({show:true});
-            $('.small-model').find('.modal-title').text('Success');
-            $('.small-model').find('.modal-body').html('<div class="text-success text-center"><i class="fa fa-check-circle"></i> '+callback.message+'.</div>'); 
             
+            $('.popupTweet').html(`<div class="tweet-show-popup-wrap">
+                                    <div class="wrap4">
+                                        <div class="tweet-show-popup-box">
+                                            <div class="tweet-show-popup-inner">
+                                                <div class="tweet-show-popup-head">
+                                                    <div class="tweet-show-popup-head-left">
+                                                        <div class="tweet-show-popup-img">
+                                                            <img class="img-responsive" src="${profile}" alt="${username}">
+                                                        </div>
+                                                        <div class="tweet-show-popup-name">
+                                                            <div class="t-s-p-n">
+                                                                <a href="/${username}">${name?name:username}</a>
+                                                            </div>
+                                                            <div class="t-s-p-n-b">
+                                                                <a href="#">@${username}</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tweet-show-popup-head-right">
+                                                        <a class="close-chatform-popup" style="cursor:pointer;"><i class="fa fa-times" aria-hidden="true" style="outline:none;"></i></a>
+                                                    </div>
+                                                </div>
+                                                <div class="tweet-show-popup-tweet-wrap">
+                                                  <center><strong class="text-success"><i class="ti-check-box"></i> Success:${callback.message}</strong></center>
+                                                  <br>
+                                                  <div class="float-left mb-2">${callback.tweeted_message}</div>
+                                                  <div class="t-show-wrap img" style="padding:0 10px;">
+                                                     <img src="${callback.image?callback.image:''}" class="img-responsive imagePopup" data-tweet="${callback.tweet_id}"/>
+                                                   </div>
+                                                </div> 
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </div>`);
             if(callback.tweet)
             {
               el[0].reset();
               $('<div class="error-banner"><div class="error-banner-inner"><p id="errorMsg">'+callback.message+'</p></div></div>').insertBefore('.header-wrapper');
               $('.error-banner').hide().slideDown(300).delay(5000).slideUp(300);
               $('.popup-tweet-wrap').hide();
-              $('.tweet-show-popup-wrap').hide();
-              var elements=$('.tweets').children('.all-tweet').length;
-              if(elements < 2){
+              if(elements < 1){
                 buildTweet('html',callback)
               }else{
                 buildTweet('prepend',callback)
@@ -463,8 +497,6 @@ $(document).on('click','.delete-button',function()
   {
     var el=$(this),
     url=el.data('url');
-    elements=$('.tweets,#comments').children('.all-tweet,.infinite-item').length;
-    elements1=$('#comments').children('.infinite-item').length;
     $.ajax(
     {
       url:url,
@@ -476,15 +508,15 @@ $(document).on('click','.delete-button',function()
       success:function(callback)
       {
         $('#comments_count').html(callback.comment_count);
-        if(elements < 2){
-          $('.tweets').html(`<div class="t-show-wrap"><p class="text-center py-5"><b><i class="ti-info-alt text-info"></i> No tweet(s) found</b></p></div>`);
-        }else{
-          el.parents('.all-tweet').remove();
+        el.parents('.all-tweet').remove();
+        var elements=$('.tweets').children('div').length,
+        elements1=$('#comments').children('div').length;
+        if(elements < 1){
+          $('.tweets').html(` <section class="all-tweet"><div class="t-show-wrap"><p class="text-center py-5"><b><i class="ti-info-alt text-info"></i> No tweet(s) found</b></p></div></section>`);
         }
+
         if(elements1 < 2){
-          $('#comments').html(`<div class="infinite-item tweet-show-popup-comment-box"><div class="tweet-show-popup-comment-inner" ><p class="text-center py-5"><b><i class="ti-info-alt text-info"></i> No comment(s) found</b></p></div></div>`);
-        }else{
-          el.parents('.infinite-item').remove();
+          $('#comments').html(`<section class="tweet-show-popup-comment-box"><div class="tweet-show-popup-comment-inner" ><p class="text-center py-5"><b><i class="ti-info-alt text-info"></i> No comment(s) found</b></p></div></section>`);
         }
       },
       error(err)

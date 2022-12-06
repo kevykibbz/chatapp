@@ -7,7 +7,7 @@
         <div class=''>
             <p class="page_title sticky-top mb-0">Home</p>
             <div class='tweet_box tweet_add'>
-                <div class='left-tweet ml-3'>
+                <div class='left-tweet ml-3 mr-3'>
                     <img class="img-responsive" src="{% static 'panel/assets/images/loader.gif' %}" style="width: 53px;height:53px;border-radius:50%;" data-src="{{data.extendedauthuser.profile_pic.url}}" alt="{{data.username}}"/>
                 </div>
                 <div class='tweet_body'>
@@ -41,7 +41,7 @@
         <div class='tweets'>
             {% for tweet in tweets %}
             {% if tweet.is_retweet %}
-            <div class="all-tweet">
+            <div class="all-tweet ">
                 <div class="t-show-wrap">
                    <div class="t-show-inner">
                         <div class="t-show-head">
@@ -84,18 +84,18 @@
                                 <ul>
                                     <li>
                                         <button class="commentBtn" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
-                                            <span class="retweetsCount">{{tweet.comment_count|intcomma|default:0}}</span>
+                                            <span class="retweetsCount">{% if tweet.comment_count > 0 %}{{tweet.comment_count|intcomma}}{% endif %}</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button class="retweet" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-retweet" aria-hidden="true"></i>
-                                            <span class="retweetsCount">{{tweet.retweet_count|intcomma|default:0}}</span>
+                                            <span class="retweetsCount">{% if tweet.retweet_count > 0 %}{{tweet.retweet_count|intcomma}}{% endif %}</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button class="like-btn" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-heart" aria-hidden="true"></i>
                                             {% if tweet.likes_count > 0 %}
-                                            <span class="likesCounter">{{tweet.likes_count|intcomma}}</span>
+                                            <span class="likesCounter">{% if tweet.likes_count > 0 %}{{tweet.likes_count|intcomma}}{% endif %}</span>
                                             {% endif %}
                                         </button>
                                     </li>
@@ -150,17 +150,17 @@
                                 <ul>
                                     <li>
                                         <button class="commentBtn" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-comment" aria-hidden="true"></i>
-                                            <span class="retweetsCount">{{tweet.comment_count|intcomma|default:0}}</span>
+                                            <span class="retweetsCount">{% if tweet.comment_count > 0 %}{{tweet.comment_count|intcomma}}{% endif %}</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button class="retweet" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-retweet" aria-hidden="true"></i>
-                                            <span class="retweetsCount">{{tweet.retweet_count|intcomma|default:0}}</span>
+                                            <span class="retweetsCount">{% if tweet.retweet_count > 0 %}{{tweet.retweet_count|intcomma}}{% endif %}</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button class="like-btn" data-tweet="{{tweet.id}}" data-user="{{tweet.user.id}}" style="outline:none;"><i class="fa fa-heart" aria-hidden="true"></i>
-                                            <span class="likesCounter">{{tweet.likes_count|intcomma}}</span>
+                                            <span class="likesCounter">{% if tweet.likes_count > 0 %}{{tweet.likes_count|intcomma}}{% endif %}</span>
                                         </button>
                                     </li>
                                     {% if tweet.user_id == data.id %}
@@ -181,24 +181,24 @@
             </div>
             {% endif %}
             {% empty %}
-            <div class="all-tweet">
+            <section class="all-tweet">
                 <div class="t-show-wrap">
                     <p class="text-center py-5"><b><i class="ti-info-alt text-info"></i> No tweet(s) found</b></p>
                 </div>
-            </div>
+            </section>
             {% endfor %}
-            <div class="all-tweet displayer" style="display:none">
+            <section class="all-tweet displayer" style="display:none">
                 <div class="t-show-wrap">
                     <p class="text-center py-5"><b><i class="spinner-border spinner-border-sm text-info"></i> Loading...</b></p>
                 </div>
-            </div>
-            <div class="row">
+            </section>
+            <section class="row">
                 <div class="mt-2 ml-2 col-12">
                     {% if tweets.has_next %}
                         <a class="infinite-more-link" href="{% url 'dashboard' %}?page={{tweets.next_page_number}}">next</a>
                     {% endif %}
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 </div>
@@ -210,6 +210,7 @@
            $('.displayer').show();
         },
         onAfterPageLoad:function(){
+            observerImages();
            $('.displayer').hide();
         }
     });

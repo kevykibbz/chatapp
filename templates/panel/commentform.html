@@ -8,14 +8,14 @@
 				<div class="tweet-show-popup-head">
 					<div class="tweet-show-popup-head-left">
 						<div class="tweet-show-popup-img">
-							<img class="img-responsive" src="{{data.extendedauthuser.profile_pic.url}}" alt="{{data.username}}"/>
+							<img class="img-responsive" src="{{tweet.user.extendedauthuser.profile_pic.url}}" alt="{{tweet.user.username}}"/>
 						</div>
 						<div class="tweet-show-popup-name">
 							<div class="t-s-p-n">
-								<a href="{% url 'profile' username=data.username %}">{{data.get_full_name|default:data.username}}</a>
+								<a href="{% url 'profile' username=tweet.user.username %}">{{tweet.user.get_full_name|default:data.username}}</a>
 							</div>
 							<div class="t-s-p-n-b">
-								<a href="#">@{{data.username}}</a>
+								<a href="#">@{{tweet.user.username}}</a>
 							</div>
 						</div>
 					</div>
@@ -90,7 +90,7 @@
 			<div class="tweet-show-popup-comment-wrap">
 			<strong class="pt-2 pl-2">Comments (<span id="comments_count">{{comments_count|intcomma|default:0}}</span>)</strong>
 			<hr>
-			<div id="comments" class="infinite-container" style="max-height:200px;overflow-y:scroll;">
+			<div id="comments" class="infinite-container" style="max-height:250px;overflow-y:scroll;">
 				{% for comment in comments %}
 			 	<div class="infinite-item tweet-show-popup-comment-box">
 					<div class="tweet-show-popup-comment-inner">
@@ -122,6 +122,7 @@
                                             {% endif %}
                                         	</button>
 										</li>
+										{% if comment.user_id == data.id %}
 										<li>
 											<a href="#" class="more"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
 											<ul> 
@@ -130,6 +131,7 @@
 											   	</li>
 											</ul>
 										</li>
+										{% endif %}
 									</ul>
 								</div>
 							</div>
@@ -138,25 +140,25 @@
 					<!--TWEET SHOW POPUP COMMENT inner END-->
 				</div>
 				{% empty %}
-				<div class="tweet-show-popup-comment-box">
+				<section class="tweet-show-popup-comment-box">
 					<div class="tweet-show-popup-comment-inner">
 						<p class="text-center py-5"><i class="ti-info-alt text-info"></i> No comment(s) found</p>
 					</div>
-				</div>
+				</section>
 				{% endfor %}
 
-				<div class="tweet-show-popup-comment-box displayer" style="display:none">
+				<section class="tweet-show-popup-comment-box displayer" style="display:none">
 	                <div class="tweet-show-popup-comment-inner">
 	                    <p class="text-center py-5"><b><i class="spinner-border spinner-border-sm text-info"></i> Loading...</b></p>
 	                </div>
-	            </div>
+	            </section>
 
 				{% if comments.has_next %}
-				<div class="row">
+				<section class="row">
 					<div class="mt-2 ml-2 col-12">
 		                <a class="infinite-more-link" href="{% url 'comment form' %}?page={{comments.next_page_number}}">next</a>
 					</div>
-				</div>
+				</section>
 				{% endif %}
 			</div>
 		</div>
@@ -170,6 +172,7 @@
            $('.displayer').show();
         },
         onAfterPageLoad:function(){
+        	observerImages();
            $('.displayer').hide();
         }
     });
